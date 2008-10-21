@@ -15,6 +15,11 @@ function addon:Debug(msg)
 	end
 end
 
+--Send a whisper
+function addon:Whisper(name, msg)
+	SendChatMessage("[" .. self.name .. "] " .. msg, "WHISPER", nil, name)
+end
+
 --AceConfig options handler
 --Opens a config window (type = "ace" or type = "blizz")
 --type-defaults to ace config window
@@ -72,7 +77,7 @@ end
 --Returns the 2nd word in the string
 --multiple spaces count as only 1 space
 function addon:ParseName(str)
-	local words = {strsplit(" ", str)}
+	local words = {strsplit(" ", strtrim(str))}
 	for idx,value in ipairs(words) do
 		if idx > 1 then
 			if value ~= "" then
@@ -84,6 +89,23 @@ function addon:ParseName(str)
 	return ""
 end
 
+--Returns an array of words
+function addon:ParseWords(str, num)
+	self:Debug("<<PARSEWORDS>>")
+	local words = {strsplit(" ", strtrim(str))}
+	local savedwords = {}
+	for idx,value in ipairs(words) do
+		if value ~= "" then
+			if #savedwords <= num then
+				savedwords[#savedwords+1] = value
+			end
+		end
+	end
+	
+	self:Debug("savedwordscount=" .. #savedwords)
+	return savedwords
+end
+
 function addon:DisbandRaid()
 	SendChatMessage("Disbanding raid.", "RAID", nil, nil)
 	for M=1,GetNumRaidMembers() do UninviteUnit("raid"..M) end
@@ -93,10 +115,12 @@ end
 
 local mixins = {
 	"Debug",
+	"Whisper",
 	"OpenConfig",
 	"GetOptions",
 	"SetOptions",
 	"ParseName",
+	"ParseWords",
 	"DisbandRaid",
 }
 
