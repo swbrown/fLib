@@ -1,12 +1,74 @@
 local MAJOR, MINOR = "fLib", 1
-local fLib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
+local fLibStub, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
+if not fLibStub then return end -- No upgrade needed
 
-if not fLib then return end -- No upgrade needed
+fLib = fLibStub
 local addon = fLib
+addon.name = "fLib"
+local DBNAME = "fLibDB"
+local icon = LibStub("LibDBIcon-1.0", true)
 
-fLib.embeds = fLib.embeds or {} -- table containing objects AceConsole is embedded in.
-fLib.commands = fLib.commands or {} -- table containing commands registered
-fLib.weakcommands = fLib.weakcommands or {} -- table containing self, command => func references for weak commands that don't persist through enable/disable
+fLib = LibStub("AceConsole-3.0"):Embed(fLib)
+
+local defaults = {
+	global = {
+		debug = false,
+		minimap = {
+			hide = false,
+		},
+	},
+}
+
+addon.db = LibStub("AceDB-3.0"):New(DBNAME, defaults)
+
+addon.embeds = addon.embeds or {} -- table containing objects fLib is embedded in.
+addon.commands = addon.commands or {} -- table containing commands registered
+addon.weakcommands = addon.weakcommands or {} -- table containing self, command => func references for weak commands that don't persist through enable/disable
+
+local options = {
+	type='group',
+	name = addon.name,
+	handler = addon,
+	args = {
+		debug = {
+			order = -1,
+			type = "toggle",
+			name = 'Debug',
+            desc = "Enables and disables debug mode.",
+            get = "GetOptions",
+            set = "SetOptions",
+		},
+		config = {
+	    	order = -1,
+	    	type = 'execute',
+	    	name = 'config',
+	    	desc = 'Opens configuration window',
+	    	func = 'OpenConfig',
+	    	guiHidden = true,
+	    },
+		minimap = {
+			order = 1,
+			type = "toggle",
+			name = "Minimap icon",
+			desc = "Toggle the minimap icon.",
+			get = function()
+				return not addon.db.global.minimap.hide
+				--return true
+			end,
+			set = function(info, v)
+				local hide = not v
+				addon.db.global.minimap.hide = hide
+				if hide then
+					icon:Hide("fLib")
+				else
+					icon:Show("fLib")
+				end
+			end,
+		},
+	}
+}
+fLib.options = options
+LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.name, options, {addon.name})
 
 --Outputs message to the chat window when debug is turned on
 function addon:Debug(msg)
@@ -28,7 +90,7 @@ function addon:OpenConfig(info, type)
 		type = "ace"
 	end
 	
-	if (self.name ~= addon.name) then
+	--if (self.name ~= addon.name) then
 		if type == "ace" then
 			--Opens Ace config dialog
 			LibStub("AceConfigDialog-3.0"):Open(self.name)
@@ -36,7 +98,7 @@ function addon:OpenConfig(info, type)
 			--Opens Blizz config dialog
 			InterfaceOptionsFrame_OpenToCategory(self.name)
 		end
-	end
+	--end
 end
 
 --Get handler for AceConfig
@@ -44,7 +106,11 @@ end
 --info[#info] = current node name
 --info[#info-1] = parent name of the current node
 function addon:GetOptions(info)
-	self:Debug("<<GetOptions>> start, " .. info[#info] .. ", parent = " .. info[#info - 1])
+	if not info then
+		self:Debug("<<GetOptions>> info is null")
+		return
+	end
+	self:Debug("<<GetOptions>> start, " .. info[#info] .. ", parent = " .. tostring(info[#info - 1]))
 	if info[#info - 1] == self.name then
 		return self.db.global[info[#info]]
 	else
@@ -60,6 +126,10 @@ end
 --Set handler for AceConfig
 --Will set the value to AceDB
 function addon:SetOptions(info, input)
+	if not info then
+		self:Debug("<<SetOptions>> info is null")
+		return
+	end
 	self:Debug("<<SetOptions>> start")
 	if info[#info - 1] == nil then
 		self.db.global[info[#info]] = input
