@@ -4,8 +4,9 @@ if not fLibStub then return end -- No upgrade needed
 
 fLib = fLibStub
 local addon = fLib
-addon.name = "fLib"
+local NAME = "fLib"
 local DBNAME = "fLibDB"
+local ICONNAME = "fLibICON"
 local icon = LibStub("LibDBIcon-1.0", true)
 
 fLib = LibStub("AceConsole-3.0"):Embed(fLib)
@@ -19,6 +20,8 @@ local defaults = {
 	},
 }
 
+addon.name = NAME
+addon.iconname = ICONNAME
 addon.db = LibStub("AceDB-3.0"):New(DBNAME, defaults)
 
 addon.embeds = addon.embeds or {} -- table containing objects fLib is embedded in.
@@ -27,7 +30,7 @@ addon.weakcommands = addon.weakcommands or {} -- table containing self, command 
 
 local options = {
 	type='group',
-	name = addon.name,
+	name = NAME,
 	handler = addon,
 	args = {
 		debug = {
@@ -59,21 +62,25 @@ local options = {
 				local hide = not v
 				addon.db.global.minimap.hide = hide
 				if hide then
-					icon:Hide("fLib")
+					icon:Hide(ICONNAME)
 				else
-					icon:Show("fLib")
+					icon:Show(ICONNAME)
 				end
 			end,
 		},
 	}
 }
 fLib.options = options
-LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.name, options, {addon.name})
+LibStub("AceConfig-3.0"):RegisterOptionsTable(NAME, options, {NAME})
 
 --Outputs message to the chat window when debug is turned on
 function addon:Debug(msg)
 	if self.db and self.db.global and self.db.global.debug then
-		self:Print(tostring(msg))
+		if self == addon then
+			LibStub('AceConsole-3.0'):Print("|cff33ff99"..NAME.."|r: " .. msg)
+		else
+			self:Print(tostring(msg))
+		end
 	end
 end
 
@@ -90,7 +97,7 @@ function addon:OpenConfig(info, type)
 		type = "ace"
 	end
 	
-	--if (self.name ~= addon.name) then
+	--if (self.name ~= NAME) then
 		if type == "ace" then
 			--Opens Ace config dialog
 			LibStub("AceConfigDialog-3.0"):Open(self.name)
@@ -144,31 +151,15 @@ function addon:SetOptions(info, input)
 	self:Debug("<<SetOptions>> end")
 end
 
---Returns the 2nd word in the string
---multiple spaces count as only 1 space
-function addon:ParseName(str)
-	local words = {strsplit(" ", strtrim(str))}
-	for idx,value in ipairs(words) do
-		if idx > 1 then
-			if value ~= "" then
-				return value
-			end
-		end
-	end
-	
-	return ""
-end
-
 --Returns an array of words
-function addon:ParseWords(str, num)
+--Multiple spaces count as only 1 space
+function addon:ParseWords(str)
 	self:Debug("<<PARSEWORDS>> " .. tostring(str))
 	local words = {strsplit(" ", strtrim(str))}
 	local savedwords = {}
 	for idx,value in ipairs(words) do
 		if value ~= "" then
-			if #savedwords <= num then
-				savedwords[#savedwords+1] = value
-			end
+			savedwords[#savedwords+1] = value
 		end
 	end
 	

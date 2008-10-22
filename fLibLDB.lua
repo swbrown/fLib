@@ -24,11 +24,17 @@ local function CreateDewMenu()
 	        subMenu = {
 	            Apple = {
 	                text = "A juicy apple",
-	                func = function() if fLib then fLib:Print("You clicked a juicy apple") end end,
+	                func = function()
+	                	fLib:Print("You clicked a juicy apple")
+	                	fLibTablet:ShowGUI()
+	                end,
 	            },
 	            Strawberry = {
 	                text = "A tasty strawberry", 
-	                func = function() if fLib then fLib:Print("You clicked a tasty strawberry") end end,
+	                func = function()
+	                	fLib:Print("You clicked a tasty strawberry")
+	                	fLibTablet:HideGUI()
+	                end,
 	            },
 	        }
 	     }
@@ -91,19 +97,7 @@ end
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", function()
 	if icon then
-		icon:Register("fLib", fLibLDB, fLib.db.global.minimap)
-		--[[
-		_G["SlashCmdList"]["BUGSACK_SHORTHAND"] = function()
-			if BugSack.db.profile.minimap.hide then
-				icon:Show("BugSack")
-				BugSack.db.profile.minimap.hide = nil
-			else
-				icon:Hide("BugSack")
-				BugSack.db.profile.minimap.hide = true
-			end
-		end
-		_G["SLASH_BUGSACK_SHORTHAND1"] = "/bugsack"
-		--]]
+		icon:Register(fLib.iconname, fLibLDB, fLib.db.global.minimap)
 	end
 end)
 f:RegisterEvent("PLAYER_LOGIN")
