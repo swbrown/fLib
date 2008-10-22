@@ -161,7 +161,7 @@ end
 
 --Returns an array of words
 function addon:ParseWords(str, num)
-	self:Debug("<<PARSEWORDS>>")
+	self:Debug("<<PARSEWORDS>> " .. tostring(str))
 	local words = {strsplit(" ", strtrim(str))}
 	local savedwords = {}
 	for idx,value in ipairs(words) do
