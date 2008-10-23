@@ -26,14 +26,14 @@ local function CreateDewMenu()
 	                text = "A juicy apple",
 	                func = function()
 	                	fLib:Print("You clicked a juicy apple")
-	                	fLibTablet:ShowGUI()
+	                	fListTablet:ShowGUI()
 	                end,
 	            },
 	            Strawberry = {
 	                text = "A tasty strawberry", 
 	                func = function()
 	                	fLib:Print("You clicked a tasty strawberry")
-	                	fLibTablet:HideGUI()
+	                	fListTablet:HideGUI()
 	                end,
 	            },
 	        }

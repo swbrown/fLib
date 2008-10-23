@@ -167,6 +167,10 @@ function addon:ParseWords(str)
 	return savedwords
 end
 
+function addon:Capitalize(str)
+	return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
+end
+
 function addon:DisbandRaid()
 	SendChatMessage("Disbanding raid.", "RAID", nil, nil)
 	for M=1,GetNumRaidMembers() do UninviteUnit("raid"..M) end
@@ -181,6 +185,7 @@ local mixins = {
 	"GetOptions",
 	"SetOptions",
 	"ParseName",
+	"Capitalize",
 	"ParseWords",
 	"DisbandRaid",
 }
