@@ -1,3 +1,5 @@
+--http://github.com/tekkub/libdatabroker-1-1/tree/master
+
 if not LibStub then return end
 
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1", true)
