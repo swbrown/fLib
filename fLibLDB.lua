@@ -21,21 +21,20 @@ local function CreateDewMenu()
 	if fList then
 		dewmenu.fList = {
 	        text = "fList",
-	        func = function() if fList then fList:OpenConfig() end end,
+	        func = function() fList.GUI.Toggle() --if fList then fList:OpenConfig() end
+	        end,
 	        hasArrow = true,
 	        subMenu = {
 	            Apple = {
 	                text = "A juicy apple",
 	                func = function()
 	                	fLib:Print("You clicked a juicy apple")
-	                	fListTablet:ShowGUI()
 	                end,
 	            },
 	            Strawberry = {
 	                text = "A tasty strawberry", 
 	                func = function()
 	                	fLib:Print("You clicked a tasty strawberry")
-	                	fListTablet:HideGUI()
 	                end,
 	            },
 	        }
@@ -66,6 +65,7 @@ function fLibLDB.OnClick(self, button)
 	else
 		if IsShiftKeyDown() then
 			--ReloadUI()
+			fList.GUI.Toggle()
 		elseif IsAltKeyDown() then
 			--BugSack:Reset()
 		--elseif BugSackFrame:IsShown() then
