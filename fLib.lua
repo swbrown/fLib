@@ -9,7 +9,8 @@ local DBNAME = "fLibDB"
 local ICONNAME = "fLibICON"
 local icon = LibStub("LibDBIcon-1.0", true)
 
-fLib = LibStub("AceConsole-3.0"):Embed(fLib)
+addon.ICONNAME = ICONNAME
+addon = LibStub("AceConsole-3.0"):Embed(addon)
 
 local defaults = {
 	global = {
@@ -20,8 +21,6 @@ local defaults = {
 	},
 }
 
-addon.name = NAME
-addon.iconname = ICONNAME
 addon.db = LibStub("AceDB-3.0"):New(DBNAME, defaults)
 
 addon.embeds = addon.embeds or {} -- table containing objects fLib is embedded in.
@@ -184,7 +183,6 @@ local mixins = {
 	"OpenConfig",
 	"GetOptions",
 	"SetOptions",
-	"ParseName",
 	"Capitalize",
 	"ParseWords",
 	"DisbandRaid",

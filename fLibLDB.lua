@@ -8,7 +8,7 @@ if not ldb then return end
 local dew = AceLibrary("Dewdrop-2.0")
 local icon = LibStub("LibDBIcon-1.0", true)
 
-fLibLDB = ldb:NewDataObject("fDKP", {
+fLibLDB = ldb:NewDataObject("fLibLDB", {
 	type = "data source",
 	text = "0",
 	icon = "Interface\\AddOns\\fLib\\Media\\pup",
@@ -90,8 +90,8 @@ do
 	local hint = "|cffeda55fRight-Click|r for fAddons"--"|cffeda55fClick|r to set date. |cffeda55fShift-Click|r to reload the user interface. |cffeda55fAlt-Click|r does nothing."
 	local line = "%d. %s (x%d)"
 	function fLibLDB.OnTooltipShow(tt)
-		tt:AddLine("fLib")
-		tt:AddLine(" ")
+		--tt:AddLine("fAddons")
+		--tt:AddLine(" ")
 		tt:AddLine(hint, 0.2, 1, 0.2, 1)
 	end
 end
@@ -99,7 +99,7 @@ end
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", function()
 	if icon then
-		icon:Register(fLib.iconname, fLibLDB, fLib.db.global.minimap)
+		icon:Register(fLib.ICONNAME, fLibLDB, fLib.db.global.minimap)
 	end
 end)
 f:RegisterEvent("PLAYER_LOGIN")
