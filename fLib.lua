@@ -35,7 +35,7 @@ local defaults = {
 	global = {
 		debug = false,
 		minimap = {
-			hide = true,
+			hide = false,
 			minimapPos = 180,
 		},
 	},
@@ -70,12 +70,10 @@ local options = {
 			name = "Minimap icon",
 			desc = "Toggle the minimap icon.",
 			get = function()
-				print('getminimap = ' .. tostring(addon.db.global.minimap.hide))
 				return not addon.db.global.minimap.hide
 				--return true
 			end,
 			set = function(info, checked)
-				print('MINIMAPV = ' .. tostring(checked))
 				addon.db.global.minimap.hide = not checked
 				
 				--local hide = not v
@@ -89,6 +87,7 @@ local options = {
 		},
 	}
 }
+addon.options = options
 
 function ace:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New(DBNAME, defaults)

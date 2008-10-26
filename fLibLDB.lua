@@ -22,38 +22,29 @@ fLibLDB = ldb:NewDataObject("fLibLDB", {
 
 
 local function CreateDewMenu()
-	local dewmenu = {}
-	
-	if fList then
-		dewmenu.fList = {
-	        text = "fList",
-	        func = function() fList.GUI.Toggle() --if fList then fList:OpenConfig() end
-	        end,
-	        hasArrow = true,
-	        subMenu = {
-	            Apple = {
-	                text = "A juicy apple",
-	                func = function()
-	                	fLib:Print("You clicked a juicy apple")
-	                end,
-	            },
-	            Strawberry = {
-	                text = "A tasty strawberry", 
-	                func = function()
-	                	fLib:Print("You clicked a tasty strawberry")
-	                end,
-	            },
-	        }
-	     }
-	end
-	
-	if fDKP then
-		dewmenu.fDKP = {
-	        text = "fDKP",
-	        func = function() if fDKP then fDKP:OpenConfig() end end,
-	    }
-	end
-	
+	local dewmenu = {
+		config = {
+			text = 'Config',
+			func = function() fLib:OpenConfig() end,
+		},
+		minimap = {
+			text = 'Show minimap icon',
+			checked = not fLib.db.global.minimap.hide,
+			func = function()
+				fLib.db.global.minimap.hide = not fLib.db.global.minimap.hide
+				if fLib.db.global.minimap.hide then
+					icon:Hide(fLib.ICONNAME)
+				else
+					icon:Show(fLib.ICONNAME)
+				end
+			end,
+		},
+		debug = {
+			text = 'Debug',
+			checked = fLib.db.global.debug,
+			func = function() fLib.db.global.debug = not fLib.db.global.debug end,
+		},
+	}
 	return dewmenu
 end
 
@@ -69,10 +60,13 @@ function fLibLDB.OnClick(self, button)
 			end
 		)
 	else
-		if IsShiftKeyDown() then
+		if not IsModifierKeyDown() then
+			--open fDKP gui
+			if fDKP then fDKP:OpenConfig() end
+		elseif IsShiftKeyDown() then
 			--ReloadUI()
 			fList.GUI.Toggle()
-		elseif IsAltKeyDown() then
+		--elseif IsAltKeyDown() then
 			--BugSack:Reset()
 		--elseif BugSackFrame:IsShown() then
 			--BugSackFrame:Hide()
@@ -93,7 +87,7 @@ end
 
 do
 	--local pauseHint = L["|cffeda55fBugGrabber|r is paused due to an excessive amount of errors being generated. It will resume normal operations in |cffff0000%d|r seconds. |cffeda55fDouble-Click|r to resume now."]
-	local hint = "|cffeda55fRight-Click|r for fAddons"--"|cffeda55fClick|r to set date. |cffeda55fShift-Click|r to reload the user interface. |cffeda55fAlt-Click|r does nothing."
+	local hint = "|cffeda55fClick|r for fDKP.\n|cffeda55fShift-Click|r for fList." --|cffeda55fAlt-Click|r does nothing."
 	local line = "%d. %s (x%d)"
 	function fLibLDB.OnTooltipShow(tt)
 		--tt:AddLine("fAddons")
