@@ -1,4 +1,8 @@
 --http://github.com/tekkub/libdatabroker-1-1/tree/master
+--LibStub
+--LibDataBroker-1.1
+--DewDrop-2.0
+--LibDBIcon-1.0
 
 if not LibStub then return end
 
@@ -12,6 +16,8 @@ fLibLDB = ldb:NewDataObject("fLibLDB", {
 	type = "data source",
 	text = "0",
 	icon = "Interface\\AddOns\\fLib\\Media\\pup",
+	--minimapPos = fLib.db.global.minimap.minimapPos,
+	--hide = fLib.db.global.minimap.hide
 })
 
 
