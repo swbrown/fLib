@@ -1,0 +1,119 @@
+http://www.wowinterface.com/forums/showthread.php?t=1602
+http://fara.webeddie.com/frames/
+
+The Fabled Dkp Raiding Addon
+
+Features
+* CONFIG
+  * Allow multiple configs (unique by name)
+  * Each config contains DKP CONFIG and LIST CONFIG
+  * Send entire config to another player
+* DKP CONFIG
+  * Dkp Cap
+  * Dkp portion for a listed player
+  * Dkp bonus for first time kills
+  * Dkp Decay
+    * By flat amount or percent
+    * By day or number of raids* LIST  
+  * Timeout minutes for ATTENDANCE CALL
+  * Mob list (automatically generated from mobs killed?)
+    * Mob name (add,remove,edit)
+    * Dkp value (edit)
+    * IsBoss true/false (edit)
+    * Mobs with assigned dkp listed first (so i don't have to scan thru millions of mobs to find the one i need to edit)
+  * Loot list (automatically generated from loot off mobs?)
+    * Loot name (add,remove,edit)
+    * Min bid (edit)
+    * (Optional) Mob name (edit)
+    * (Optional) Instance name (edit)
+  * Player list
+    * Player name (add,remove,edit)
+    * Timestamp
+    * Dkp total (add,subtract,edit)
+    * Attendance
+      *?can only be changed when player is added or removed from raid data
+      *?or calculated from scanning RAID DATA
+    * Loot awarded
+      *?can only be changed when awarded loot is changed in RAID DATA or LOOT LIST
+      *?or calculated from scanning RAID DATA and LOOT LIST
+    *?Ability to select multiple players and add, subtract, edit dkp total
+* LIST CONFIG
+  * Channels to announce to
+  * Special word to accept for listing
+  * Special word for accept invite
+  * Special word for add alt
+  * Special word for add note
+  *?Timeout minutes for being offline and kicked from list
+  * Allow to list from an alt (special word + name of the main to list)
+    * for example, i'd have to type 'list Tamrah', if i'm trying to list while playing on Grunster
+    * the list should then list Tamrah and have Grunster on alt list
+  *?Only allow certain guild rank(s) to list?
+  *?Blacklist, never allow these players to list
+  *?Current raid buffs / missing raid buffs (totally overkill feature haha)
+* LOOT LIST (loot not awarded thru raid)
+  * Loot name (add, remove,edit)
+  * Player name (edit)
+  * Dkp charged (edit)
+  * Datetime
+* RAID DATA
+  * Unique name, timestamp of raid start
+  * Nickname (like what instances were raided during this raid)
+  * Start raid
+  * Close raid
+  * List of BOSS KILLS (categorized by instance?)
+  * List of DKP AWARDS
+  *?List of players who have been in the raid
+    *?List of timestamp(s), entering/leaving raid, for each player
+    * i thought this feature was a nice thing in Headcount addon, when i needed to reconstruct a scenraid raid dkp.. but i guess if our addon works, we don't need this info
+  * Dkp timer (only available during open raid)
+    * DKP AWARD for x amount every y minutes (progression content)
+  * Send RAID DATA to another player (only available for closed raid)
+    * Validate... i don't know what validate button actually does?...
+    *?Allow replace raid with incoming raid
+  *?Send All RAID DATA to another player
+* BOSS KILL
+  * Unique name, boss name + timestamp
+  * DKP AWARD for this kill
+  * LOOT LIST for this kill
+  * List of loot, winners/disenchanted, dkp charged
+  * Able to add, remove, edit loot
+* DKP AWARD
+  * Dkp amount (award to current raid players and listed players)
+  * List of current raid players
+  * List of listed players (created from Attendance Call)
+  * (Optional) Boss killed
+  * Able to add, remove current raid players
+  * Able to add, remove listed players
+  * Able to edit amount dkp
+  * Able to edit boss killed
+*ATTENDANCE CALL
+  * Announce/whisper people on the list for attendance
+  * Timeout minutes before attendance call is over
+  * Players must whisper back a special word to be counted as present before timeout
+* BIDDING WINDOW
+  *!!Allow adding items from your bags (drag and drop, right click items in bag, drop down list of items in bag)
+  * Announce loot and ask for bidding
+  * Announce any loot rules, dkp rules etc (manually or automatically)
+  * Announce winners, disenchanting
+  * Award loot to raider and charge dkp (if loot window is open)
+  * Award loot to a disenchater (if loot window is open)
+    *!!List of disenchanters, ordered by priority (is there a way to find out automatically if people can disenchant?)
+  * Separate announce vs award button?
+    * or the way right now where if you don't have the loot window open it just announces works too
+  *!!After loot awarded anouncement, if player opens trade, automatically put the right item in the trade window
+    * is that even possible?
+    * or at least once the item is traded to the right player have it automatically charge the player the amount that was anounced?
+    * or have it pop up a window, after the trade is finished
+      * and if that player was announced/awarded the item, have text box with dkp charged and click ok
+      * or text box with dkp blank if they weren't announced/awarded it
+* SYNC DATA
+  *!!Sync config?
+  *!!Sync raid data?
+  *!!Ways to sync...
+    * 
+* EXPORT DATA
+  * Usul will do this part!!!
+
+
+ 
+

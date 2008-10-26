@@ -5,6 +5,8 @@
 --AceDB-3.0
 --AceTimer-3.0
 --AceLibrary
+--LibDBIcon-1.0
+--Tablet-2.0
 
 local MAJOR, MINOR = "fLib", 1
 local fLibStub, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
