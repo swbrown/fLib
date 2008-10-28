@@ -266,8 +266,6 @@ function addon:ConfirmDialog(msg, type, callback, ...)
 		args2[#args2+1] = 'arg' .. tostring(count)
 		args2[#args2+1] = function() LibStub('AceTimer-3.0'): ScheduleTimer( CloseHandler, 0 ) end
 		
-		
-		
 		tablet:Register(NAME.. '_Confirm', 'detachedData', tablet_data,
 			'strata', "DIALOG",
 			'maxHeight', 850,

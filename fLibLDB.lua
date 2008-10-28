@@ -62,12 +62,15 @@ function fLibLDB.OnClick(self, button)
 	else
 		if not IsModifierKeyDown() then
 			--open fDKP gui
-			if fDKP then fDKP:OpenConfig() end
+			--if fDKP then fDKP:OpenConfig() end
 		elseif IsShiftKeyDown() then
 			--ReloadUI()
 			fList.GUI.Toggle()
 		--elseif IsAltKeyDown() then
 			--BugSack:Reset()
+		elseif IsControlKeyDown() then
+			--fDKP.GUI.dkplist.Toggle()
+			fDKP.GUI.mainwindow.Toggle()
 		--elseif BugSackFrame:IsShown() then
 			--BugSackFrame:Hide()
 		else
@@ -87,7 +90,7 @@ end
 
 do
 	--local pauseHint = L["|cffeda55fBugGrabber|r is paused due to an excessive amount of errors being generated. It will resume normal operations in |cffff0000%d|r seconds. |cffeda55fDouble-Click|r to resume now."]
-	local hint = "|cffeda55fClick|r for fDKP.\n|cffeda55fShift-Click|r for fList." --|cffeda55fAlt-Click|r does nothing."
+	local hint = "|cffeda55fClick|r for fRaid.\n|cffeda55fShift-Click|r for fList.\n|cffeda55fCtrl-Click|r for fDKP."
 	local line = "%d. %s (x%d)"
 	function fLibLDB.OnTooltipShow(tt)
 		--tt:AddLine("fAddons")
