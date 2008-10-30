@@ -60,20 +60,22 @@ function fLibLDB.OnClick(self, button)
 			end
 		)
 	else
-		if not IsModifierKeyDown() then
+		--if not IsModifierKeyDown() then
 			--open fDKP gui
 			--if fDKP then fDKP:OpenConfig() end
-		elseif IsShiftKeyDown() then
+		if IsShiftKeyDown() then
 			--ReloadUI()
 			fList.GUI.Toggle()
 		--elseif IsAltKeyDown() then
 			--BugSack:Reset()
 		elseif IsControlKeyDown() then
 			--fDKP.GUI.dkplist.Toggle()
-			fDKP.GUI.mainwindow.Toggle()
+			fDKP.GUI.Toggle()
 		--elseif BugSackFrame:IsShown() then
 			--BugSackFrame:Hide()
 		else
+			print('plain click')
+			fRaid.GUI.Toggle()
 			--BugSack:ShowFrame("session")
 			--fDKP:OpenConfig()
 		end
