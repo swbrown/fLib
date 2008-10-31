@@ -211,6 +211,11 @@ function addon:Capitalize(str)
 	return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
 end
 
+function addon:ExtractItemId(itemlink)
+	local _,_,itemid = strfind(itemlink, 'Hitem:(%d+):')
+	return itemid
+end
+
 --Disbands the current raid
 local function DisbandRaidHandler(callback)
 	SendChatMessage("Disbanding raid.", "RAID", nil, nil)
@@ -351,6 +356,7 @@ local mixins = {
 	"SetOptions",
 	"Capitalize",
 	"ParseWords",
+	"ExtractItemId",
 	"DisbandRaid",
 	"ConfirmDialog"
 }
