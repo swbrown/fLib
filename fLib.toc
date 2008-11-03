@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30000
 ## Title: fLib
 ## Description: Library for Tamrah's addon
 ## SavedVariables: fLibDB
