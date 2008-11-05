@@ -114,7 +114,34 @@ local function AcquireEditBox(self)
 	local ui = self.uieditboxes[self.uieditboxes_idx]
 	if not ui then
 		--create it
+		ui = CreateFrame('editbox', nil, nil)
 		
+		ui:SetFontObject(ChatFontNormal) --required to let you type in it
+		ui:SetTextInsets(6,6,0,0)
+		ui:SetAutoFocus(false) --required to let you escape focus on the editbox
+		
+		ui:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 8, insets = {left = 2, right = 2, top = 2, bottom = 2}})
+		ui:SetBackdropBorderColor(0.6, 0.6, 0.6)
+		
+		local bg = eb:CreateTexture(nil, "BACKGROUND")
+		bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
+		bg:SetPoint("TOPLEFT", 1, -1)
+		bg:SetPoint("BOTTOMRIGHT", -1, 1)
+		bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
+		
+		local label = ui:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+		ui.label = label
+		label:SetAlpha(0.2)
+		label:SetText('test')
+		label:SetPoint('LEFT', 6, 0)
+		label:Show()
+		
+		ui:SetHeight(label:GetHeight() + 8)
+		
+		ui:SetScript('OnEnterPressed', function() this:ClearFocus() end)
+		ui:SetScript('OnEscapePressed', function() this:ClearFocus() end)
+		ui:SetScript('OnEditFocusGained', function() this:HighlightText() end)
+		ui:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
 	end
 	return ui
 end

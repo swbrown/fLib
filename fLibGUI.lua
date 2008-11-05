@@ -1,159 +1,80 @@
 fLib.GUI = {}
 
---returns a draggable empty frame
-function fLib.GUI.CreateMainWindowEx()
-	--Main Window
-	local mw = CreateFrame('frame', nil, UIParent)
+--returns a pretty draggable frame that you need to
+--position, size, add scripts yourself
+--if you provide a name, the window is closable with escape
+function fLib.GUI.CreateEmptyFrame(look, name)
+	local mw = CreateFrame('frame', name, UIParent)
 	mw:Hide()
 	mw:SetClampedToScreen(true)
 	mw:SetMovable(true)
 	mw:EnableMouse(true)
 	mw:RegisterForDrag('LeftButton')
+	--mw:SetResizable(true)
 	
-	--Some functions for mainwindow
-	mw.closers = {}
-	function mw.AddCloser(func)
-		tinsert(mw.closers, func)
-	end
+	--local b = CreateFrame('button', nil, mw)
+	--mw.ResizeCornerButton = b
+	--b:SetPoint('BOTTOMRIGHT', -3, 3)
+	--b:SetWidth(16)
+	--b:SetHeight(16)
+	--b:SetScript('OnMouseDown', function() this:GetParent():StartSizing() end)
+	----b:SetScript('OnLoad', function() this:GetNormalTexture():SetVertexColor(.6, .6, .6) end)
+	--b:SetScript('OnMouseUp', function() this:GetParent():StopMovingOrSizing() end)
+	--b:SetNormalTexture('Interface/AddOns/WowLua/images/resize')
 	
-	function mw.Toggle()
-		if mw:IsVisible() then
-			mw:Hide()
-			--if type(closehandler) == 'function' then
-			--	closehandler()
-			--end
-			for idx,func in ipairs(mw.closers) do
-				func()
-			end
+	--Some functions for mainwindow		
+	function mw:Toggle()
+		if self:IsVisible() then
+			self:Hide()
 		else
-			mw:Show()
+			self:Show()
 		end
 	end
 	
 	--Scripts for mainwindow
+	if name and name ~= '' then
+		mw:SetScript('OnShow', function()
+			tinsert(UISpecialFrames,this:GetName())
+		end)
+	end	
 	mw:SetScript('OnDragStart', function(this, button)
 		this:StartMoving()
 	end)
 	mw:SetScript('OnDragStop', function(this, button)
 		this:StopMovingOrSizing()
-		--save new coords
-		if type(savecoordshandler) == 'function' then
-			savecoordshandler(mw)
-		end
 	end)
 	
-	mw:SetBackdrop({
-		edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',
-		edgeSize = 16,
-		insets = {left = 2, right = 2, top = 2, bottom = 2}
-	})
-	mw:SetBackdropBorderColor(0.6, 0.6, 0.6)
-	
-	bg = mw:CreateTexture(nil, 'BACKGROUND')
-	bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
-	bg:SetPoint('TOPLEFT', 4, -4)
-	bg:SetPoint('BOTTOMRIGHT', -4, 4)
-	bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
-	
-	--Title of main window
-	fs = mw:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-	fs:SetText(title)
-	fs:SetPoint('TOP', 0, -y)
-	fs:SetAlpha(.6)
-	
-	--Close Button
-	button = fLib.GUI.CreateActionButton(mw)
-	mw.closebutton = button
-	button:SetText('Close')
-	button:SetWidth(button:GetTextWidth())
-	button:SetHeight(button:GetTextHeight())
-	button:SetScript('OnClick', function() mw.Toggle() end)
-	button:SetPoint('BOTTOMRIGHT', mw, 'BOTTOMRIGHT', -padding-8, padding+8)
+	--Look
+	if not look then
+		look = 1
+	end
+	if look == 1 then
+		mw:SetBackdrop({
+			bgFile='Interface/Tooltips/ChatBubble-Background',
+			edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',
+			tile = false,
+			tileSize = 0,
+			edgeSize = 16,
+			insets = {left = 4, right = 4, top = 4, bottom = 4}
+			--insets are for the bgFile
+		})
+		mw:SetBackdropBorderColor(0.6, 0.6, 0.6)
+	elseif look == 2 then
+		mw:SetBackdrop({
+			edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',
+			edgeSize = 16,
+		})
+		mw:SetBackdropBorderColor(0.6, 0.6, 0.6)
+		
+		bg = mw:CreateTexture(nil, 'BACKGROUND')
+		bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
+		bg:SetPoint('TOPLEFT', 4, -4)
+		bg:SetPoint('BOTTOMRIGHT', -4, 4)
+		bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
+	end
 	
 	return mw
 end
-
-
---title of the window
---gx,gy point TOPLEFT relative TOPLEFT
---padding between elements
---savecoordshandler will be called ondragstop, and will receive one arg, the frame being created
---closehandler will be called Toggle, when hiding the frame
---returns frame, y
---y is a positive number, indicating the distance from the top of the frame
---where you can start putting stuff below the title
-function fLib.GUI.CreateMainWindow(title, gx, gy, width, height, padding, savecoordshandler, closehandler)
-	local x = padding
-	local y = padding
-	local bg, fs, button
-	
-	--Main Window
-	local mw = CreateFrame('frame', nil, UIParent)
-	mw:Hide()
-	mw:SetWidth(width)
-	mw:SetHeight(height)
-	mw:SetClampedToScreen(true)
-	mw:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', gx,gy)
-	mw:SetMovable(true)
-	mw:EnableMouse(true)
-	mw:RegisterForDrag('LeftButton')
-	
-	--Some functions for mainwindow
-	function mw.Toggle()
-		if mw:IsVisible() then
-			mw:Hide()
-			if type(closehandler) == 'function' then
-				closehandler()
-			end
-		else
-			mw:Show()
-		end
-	end
-	
-	--Scripts for mainwindow
-	mw:SetScript('OnDragStart', function(this, button)
-		this:StartMoving()
-	end)
-	mw:SetScript('OnDragStop', function(this, button)
-		this:StopMovingOrSizing()
-		--save new coords
-		if type(savecoordshandler) == 'function' then
-			savecoordshandler(mw)
-		end
-	end)
-	
-	mw:SetBackdrop({
-		edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',
-		edgeSize = 16,
-		insets = {left = 2, right = 2, top = 2, bottom = 2}
-	})
-	mw:SetBackdropBorderColor(0.6, 0.6, 0.6)
-	
-	bg = mw:CreateTexture(nil, 'BACKGROUND')
-	bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
-	bg:SetPoint('TOPLEFT', 4, -4)
-	bg:SetPoint('BOTTOMRIGHT', -4, 4)
-	bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
-	
-	--Title of main window
-	fs = mw:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-	fs:SetText(title)
-	fs:SetPoint('TOP', 0, -y)
-	fs:SetAlpha(.6)
-	y = y + fs:GetHeight() + padding
-	
-	--Close Button
-	--button = fLib.GUI.CreateActionButton('Close', mw, 0, 0, mw.Toggle)
-	button = fLib.GUI.CreateActionButton(mw)
-	button:SetText('Close')
-	button:SetWidth(button:GetTextWidth())
-	button:SetHeight(button:GetTextHeight())
-	button:SetScript('OnClick', function() mw.Toggle() end)
-	button:SetPoint('BOTTOMRIGHT', mw, 'BOTTOMRIGHT', -padding-8, padding+8)
-	
-	return mw, y
-end
-
 
 function fLib.GUI.CreateSeparator(parent)
 	--Separator
@@ -259,45 +180,37 @@ function fLib.GUI.CreateCheck(parent, x, y)
 	return button
 end
 
---returns the editbox that gets greated
+--returns an editbox with the width not set
 --text is the transparent label in the edit box
-function fLib.GUI.CreateEditBox(text, parent, x, y, width, height)
+function fLib.GUI.CreateEditBox(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
-	eb:SetPoint('TOPLEFT', parent, 'TOPLEFT', x, y)
-	eb:SetWidth(width)
-	eb:SetHeight(height)
 	
 	eb:SetFontObject(ChatFontNormal) --required to let you type in it
-	eb:SetTextInsets(8,8,0,0)
+	eb:SetTextInsets(6,6,0,0)
 	eb:SetAutoFocus(false) --required to let you escape focus on the editbox
 	
-	eb:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 16, insets = {left = 2, right = 2, top = 2, bottom = 2}})
+	eb:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 8, insets = {left = 2, right = 2, top = 2, bottom = 2}})
 	eb:SetBackdropBorderColor(0.6, 0.6, 0.6)
 	
 	local bg = eb:CreateTexture(nil, "BACKGROUND")
 	bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
-	bg:SetPoint("TOPLEFT", 4, -4)
-	bg:SetPoint("BOTTOMRIGHT", -4, 4)
+	bg:SetPoint("TOPLEFT", 1, -1)
+	bg:SetPoint("BOTTOMRIGHT", -1, 1)
 	bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
 	
+	
 	local label = eb:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+	eb.label = label
 	label:SetAlpha(0.2)
 	label:SetText(text)
-	label:SetPoint("TOPLEFT", 8, 0)
-	label:SetPoint("BOTTOMLEFT", -8, 0)
+	label:SetPoint('LEFT', 6, 0)
 	label:Show()
+	
+	eb:SetHeight(label:GetHeight() + 8)
 	
 	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
 	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
 	eb:SetScript('OnEditFocusGained', function() this:HighlightText() end)
-	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)
-	
-	
-	
-		--editBox:SetScript("OnEnterPressed", function() this:ClearFocus() end)
-	--editBox:SetScript("OnEscapePressed", function() this:SetText(""); this:ClearFocus(); fDKPSearch_Label:Show() end)
-	--editBox:SetScript("OnEditFocusGained", function() if IsControlKeyDown() then this:SetText(""); this:ClearFocus(); fDKPSearch_Label:Show() else fDKPSearch_Label:Hide(); this:HighlightText() end end)
-	--editBox:SetScript("OnTextChanged", function() fDKPSearch:Search(this:GetText()) end)
-	
+	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
 	return eb
 end

@@ -213,7 +213,7 @@ end
 
 function addon:ExtractItemId(itemlink)
 	local _,_,itemid = strfind(itemlink, 'Hitem:(%d+):')
-	return itemid
+	return tonumber(itemid)
 end
 
 --Disbands the current raid
