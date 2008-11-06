@@ -12,15 +12,15 @@ function fLib.GUI.CreateEmptyFrame(look, name)
 	mw:RegisterForDrag('LeftButton')
 	--mw:SetResizable(true)
 	
-	--local b = CreateFrame('button', nil, mw)
-	--mw.ResizeCornerButton = b
-	--b:SetPoint('BOTTOMRIGHT', -3, 3)
-	--b:SetWidth(16)
-	--b:SetHeight(16)
-	--b:SetScript('OnMouseDown', function() this:GetParent():StartSizing() end)
-	----b:SetScript('OnLoad', function() this:GetNormalTexture():SetVertexColor(.6, .6, .6) end)
-	--b:SetScript('OnMouseUp', function() this:GetParent():StopMovingOrSizing() end)
-	--b:SetNormalTexture('Interface/AddOns/WowLua/images/resize')
+	local b = CreateFrame('button', nil, mw)
+	mw.ResizeCornerButton = b
+	b:SetPoint('BOTTOMRIGHT', -3, 3)
+	b:SetWidth(16)
+	b:SetHeight(16)
+	b:SetScript('OnMouseDown', function() this:GetParent():StartSizing() end)
+	--b:SetScript('OnLoad', function() this:GetNormalTexture():SetVertexColor(.6, .6, .6) end)
+	b:SetScript('OnMouseUp', function() this:GetParent():StopMovingOrSizing() end)
+	b:SetNormalTexture('Interface/AddOns/WowLua/images/resize')
 	
 	--Some functions for mainwindow		
 	function mw:Toggle()
@@ -185,11 +185,11 @@ end
 function fLib.GUI.CreateEditBox(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
 	
-	eb:SetFontObject(ChatFontNormal) --required to let you type in it
+	eb:SetFontObject(GameFontHighlight) --required to let you type in it
 	eb:SetTextInsets(6,6,0,0)
 	eb:SetAutoFocus(false) --required to let you escape focus on the editbox
 	
-	eb:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 8, insets = {left = 2, right = 2, top = 2, bottom = 2}})
+	eb:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 8})
 	eb:SetBackdropBorderColor(0.6, 0.6, 0.6)
 	
 	local bg = eb:CreateTexture(nil, "BACKGROUND")
@@ -206,7 +206,40 @@ function fLib.GUI.CreateEditBox(parent, text)
 	label:SetPoint('LEFT', 6, 0)
 	label:Show()
 	
-	eb:SetHeight(label:GetHeight() + 8)
+	eb:SetHeight(label:GetHeight() + 6)
+	
+	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
+	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
+	eb:SetScript('OnEditFocusGained', function() this:HighlightText() end)
+	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
+	return eb
+end
+
+function fLib.GUI.CreateEditBox2(parent, text)
+	local eb = CreateFrame('editbox', nil, parent)
+	
+	eb:SetFontObject(GameFontHighlightSmallLeft) --required to let you type in it
+	eb:SetTextInsets(5,5,0,0)
+	eb:SetAutoFocus(false) --required to let you escape focus on the editbox
+	
+	--eb:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 1})
+	--eb:SetBackdropBorderColor(0.6, 0.6, 0.6)
+	
+	--local bg = eb:CreateTexture(nil, "BACKGROUND")
+	--bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
+	--bg:SetPoint("TOPLEFT", 1, -1)
+	--bg:SetPoint("BOTTOMRIGHT", -1, 1)
+	--bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
+	
+	
+	local label = eb:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmallLeft')
+	eb.label = label
+	label:SetAlpha(0.1)
+	label:SetText(text)
+	label:SetPoint('LEFT', 5, 0)
+	label:Show()
+	
+	eb:SetHeight(label:GetHeight() + 4)
 	
 	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
 	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
