@@ -3,8 +3,13 @@ fLib.GUI = {}
 --returns a pretty draggable frame that you need to
 --position, size, add scripts yourself
 --if you provide a name, the window is closable with escape
-function fLib.GUI.CreateEmptyFrame(look, name)
-	local mw = CreateFrame('frame', name, UIParent)
+function fLib.GUI.CreateEmptyFrame(look, name, otherparent)
+	local mw
+	if otherparent then
+		mw = CreateFrame('frame', name, otherparent)
+	else
+		mw = CreateFrame('frame', name, UIParent)
+	end
 	mw:Hide()
 	mw:SetClampedToScreen(true)
 	mw:SetMovable(true)
@@ -12,6 +17,7 @@ function fLib.GUI.CreateEmptyFrame(look, name)
 	mw:RegisterForDrag('LeftButton')
 	--mw:SetResizable(true)
 	
+	--[[
 	local b = CreateFrame('button', nil, mw)
 	mw.ResizeCornerButton = b
 	b:SetPoint('BOTTOMRIGHT', -3, 3)
@@ -21,6 +27,7 @@ function fLib.GUI.CreateEmptyFrame(look, name)
 	--b:SetScript('OnLoad', function() this:GetNormalTexture():SetVertexColor(.6, .6, .6) end)
 	b:SetScript('OnMouseUp', function() this:GetParent():StopMovingOrSizing() end)
 	b:SetNormalTexture('Interface/AddOns/WowLua/images/resize')
+	--]]
 	
 	--Some functions for mainwindow		
 	function mw:Toggle()
@@ -76,6 +83,26 @@ function fLib.GUI.CreateEmptyFrame(look, name)
 	return mw
 end
 
+--returns an empty clear frame, not draggable
+function fLib.GUI.CreateClearFrame(parent)
+	local mw = CreateFrame('frame', nil, parent)
+	mw:SetClampedToScreen(true)
+	mw:EnableMouse(true)
+
+	--Look
+	mw:SetBackdrop({
+		--bgFile='Interface/Tooltips/ChatBubble-Background',
+		edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',
+		tile = false,
+		tileSize = 0,
+		edgeSize = 2,
+	})
+	mw:SetBackdropBorderColor(0.2, 0.2, 0.2)
+	
+	return mw
+end
+
+
 function fLib.GUI.CreateSeparator(parent)
 	--Separator
 	local tex = parent:CreateTexture(nil, 'OVERLAY')
@@ -127,8 +154,9 @@ end
 
 --returns the button that gets created
 --x,y point.  TOPLEFT relative to TOPLEFT
-function fLib.GUI.CreateCheck(parent, x, y)
-	local button = CreateFrame("button", nil, parent)
+--function fLib.GUI.CreateCheck(parent, x, y)
+function fLib.GUI.CreateCheck(parent)
+	local button = CreateFrame('button', nil, parent)
 	--button:SetFrameLevel(12)
 	--button.indentation = 0
 	local check = button:CreateTexture(nil, "ARTWORK")
@@ -157,7 +185,7 @@ function fLib.GUI.CreateCheck(parent, x, y)
 	--button.check = check
 	--button.self = self
 	--button:SetPoint("RIGHT", self.scrollFrame, "RIGHT", -7, 0)
-	button:SetPoint('TOPLEFT', parent, 'TOPLEFT', x, y)
+	--!--button:SetPoint('TOPLEFT', parent, 'TOPLEFT', x, y)
 	--check.shown = false
 	check:SetPoint("TOPLEFT", button, "TOPLEFT")
 	--col1:SetPoint("TOPLEFT", check, "TOPLEFT")
