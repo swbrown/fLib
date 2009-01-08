@@ -275,3 +275,36 @@ function fLib.GUI.CreateEditBox2(parent, text)
 	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
 	return eb
 end
+
+function fLib.GUI.CreateEditBox3(parent, text)
+	local eb = CreateFrame('editbox', nil, parent)
+	
+	eb:SetFontObject(GameFontHighlightSmallLeft) --required to let you type in it
+	eb:SetTextInsets(5,5,0,0)
+	eb:SetAutoFocus(false) --required to let you escape focus on the editbox
+	
+	eb:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 6})
+	eb:SetBackdropBorderColor(0.4, 0.4, 0.4)
+	
+	--local bg = eb:CreateTexture(nil, "BACKGROUND")
+	--bg:SetTexture("Interface/ChatFrame/ChatFrameBackground")
+	--bg:SetPoint("TOPLEFT", 1, -1)
+	--bg:SetPoint("BOTTOMRIGHT", -1, 1)
+	--bg:SetGradientAlpha("VERTICAL", 0, 0, 0, 0.9, 0.2, 0.2, 0.2, 0.9)
+	
+	
+	local label = eb:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmallLeft')
+	eb.label = label
+	label:SetAlpha(0.1)
+	label:SetText(text)
+	label:SetPoint('LEFT', 5, 0)
+	label:Show()
+	
+	eb:SetHeight(label:GetHeight() + 4)
+	
+	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
+	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
+	eb:SetScript('OnEditFocusGained', function() this:HighlightText() end)
+	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
+	return eb
+end
