@@ -69,8 +69,7 @@ function fLibLDB.OnClick(self, button)
 		--elseif IsAltKeyDown() then
 			--BugSack:Reset()
 		elseif IsControlKeyDown() then
-			--fDKP.GUI.dkplist.Toggle()
-			fDKP.GUI:Toggle()
+			fRaid.View()
 		--elseif BugSackFrame:IsShown() then
 			--BugSackFrame:Hide()
 		else

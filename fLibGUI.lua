@@ -1,9 +1,9 @@
-fLib.GUI = {}
+fLibGUI = {}
 
 --returns a pretty draggable frame that you need to
 --position, size, add scripts yourself
 --if you provide a name, the window is closable with escape
-function fLib.GUI.CreateEmptyFrame(look, name, otherparent)
+function fLibGUI.CreateEmptyFrame(look, name, otherparent)
 	local mw
 	if otherparent then
 		mw = CreateFrame('frame', name, otherparent)
@@ -84,7 +84,7 @@ function fLib.GUI.CreateEmptyFrame(look, name, otherparent)
 end
 
 --returns an empty clear frame, not draggable
-function fLib.GUI.CreateClearFrame(parent)
+function fLibGUI.CreateClearFrame(parent)
 	local mw = CreateFrame('frame', nil, parent)
 	mw:SetClampedToScreen(true)
 	mw:EnableMouse(true)
@@ -103,7 +103,7 @@ function fLib.GUI.CreateClearFrame(parent)
 end
 
 
-function fLib.GUI.CreateSeparator(parent)
+function fLibGUI.CreateSeparator(parent)
 	--Separator
 	local tex = parent:CreateTexture(nil, 'OVERLAY')
 	tex:SetHeight(1)
@@ -112,14 +112,14 @@ function fLib.GUI.CreateSeparator(parent)
 end
 
 --returns a blank fontstring
-function fLib.GUI.CreateLabel(parent)
+function fLibGUI.CreateLabel(parent)
 	local fs = parent:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
 	fs:SetAlpha(.6)
 	return fs
 end
 
 --returns a blank checkbutton object
-function fLib.GUI.CreateCheckButton(parent)
+function fLibGUI.CreateCheckButton(parent)
 	local cb = CreateFrame('CheckButton', nil, parent, 'UICheckButtonTemplate')
 	cb:SetWidth(24)
     cb:SetHeight(24)
@@ -132,7 +132,7 @@ function fLib.GUI.CreateCheckButton(parent)
 end
 
 --returns a blank action button that highlights when hovered over
-function fLib.GUI.CreateActionButton(parent)
+function fLibGUI.CreateActionButton(parent)
 	local b = CreateFrame('button', nil, parent)
 	local fs = b:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
 	b:SetFontString(fs)
@@ -154,8 +154,8 @@ end
 
 --returns the button that gets created
 --x,y point.  TOPLEFT relative to TOPLEFT
---function fLib.GUI.CreateCheck(parent, x, y)
-function fLib.GUI.CreateCheck(parent)
+--function fLibGUI.CreateCheck(parent, x, y)
+function fLibGUI.CreateCheck(parent)
 	local button = CreateFrame('button', nil, parent)
 	--button:SetFrameLevel(12)
 	--button.indentation = 0
@@ -210,7 +210,7 @@ end
 
 --returns an editbox with the width not set
 --text is the transparent label in the edit box
-function fLib.GUI.CreateEditBox(parent, text)
+function fLibGUI.CreateEditBox(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
 	
 	eb:SetFontObject(GameFontHighlight) --required to let you type in it
@@ -243,7 +243,7 @@ function fLib.GUI.CreateEditBox(parent, text)
 	return eb
 end
 
-function fLib.GUI.CreateEditBox2(parent, text)
+function fLibGUI.CreateEditBox2(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
 	
 	eb:SetFontObject(GameFontHighlightSmallLeft) --required to let you type in it
@@ -276,7 +276,7 @@ function fLib.GUI.CreateEditBox2(parent, text)
 	return eb
 end
 
-function fLib.GUI.CreateEditBox3(parent, text)
+function fLibGUI.CreateEditBox3(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
 	
 	eb:SetFontObject(GameFontHighlightSmallLeft) --required to let you type in it
