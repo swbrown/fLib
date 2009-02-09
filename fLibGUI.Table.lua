@@ -494,6 +494,3 @@ function fLibGUI.Table.New(parent, source, headerdata, rowcount, width)
 	mf:ResetColumnFramePoints()
 end
 
-
-
-
