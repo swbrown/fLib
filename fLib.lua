@@ -217,130 +217,43 @@ function addon:ExtractItemId(itemlink)
 end
 
 --Disbands the current raid
-local function DisbandRaidHandler(callback)
+local function DisbandRaidHandler()
 	SendChatMessage("Disbanding raid.", "RAID", nil, nil)
 	for M=1,GetNumRaidMembers() do UninviteUnit("raid"..M) end
-	callback()
 end
 function addon:DisbandRaid()
 	--SendChatMessage("Disbanding raid.", "RAID", nil, nil)
 	--for M=1,GetNumRaidMembers() do UninviteUnit("raid"..M) end
-	self:ConfirmDialog('Are you sure you want to disband the raid?', 'YESNO', DisbandRaidHandler)
-end
-
---helper function for ConfirmDialog
-local function CloseHandler()
-	tablet:Close(NAME .. '_Confirm')
-	tablet:Unregister(NAME .. '_Confirm')
+	self:ConfirmDialog2('Are you sure you want to disband the raid?', DisbandRaidHandler)
 end
 
 --shows a confirmation dialog
---possible values for type are 'YESNO' and 'OK'
---for 'YESNO' types, clicking yes will call the callback function with args specified in ...
---for 'OK' types', clicking ok will close the dialog
---defaults to 'OK', if type 
-function addon:ConfirmDialog(msg, type, callback, ...)
-	if not tablet:IsRegistered(NAME .. '_Confirm') then
-		self:Debug('REgistering tablet ' .. NAME .. '_Confirm')
-		
-		if not type or (type ~= 'OK' and type ~= 'YESNO') then
-			type = 'OK'
-		end
-		if not callback then
-			type = 'OK'
-		end
-		
-		local tablet_data = {
-			detached = true,
-			anchor = "CENTER",
-			offsetx = 0,
-			offsety = 0 }
-			
-		
-		local args = {...}
-		local args2 = {}
-		local count = 0
-		if #args > 0 then
-			for idx,val in ipairs(args) do
-				count  = count + 1
-				args2[#args2+1] = 'arg' .. tostring(count)
-				args2[#args2+1] = val
-			end
-		end
-		count = count + 1
-		args2[#args2+1] = 'arg' .. tostring(count)
-		args2[#args2+1] = function() LibStub('AceTimer-3.0'): ScheduleTimer( CloseHandler, 0 ) end
-		
-		tablet:Register(NAME.. '_Confirm', 'detachedData', tablet_data,
-			'strata', "DIALOG",
-			'maxHeight', 850,
-			'cantAttach', true,
-			'dontHook', true,
-			'showTitleWhenDetached', true,
-			'children', function()
-				tablet:SetTitle(msg)
-				tablet:SetTitleColor(.2, .6, 1)
-				local cat = tablet:AddCategory('columns', 1)
-				if type == 'OK' then
-					cat:AddLine(
-						'text', 'Ok',
-						'justify', 'CENTER',
-						'textR', .2, 'textG', .6, 'textB', 1,
-						'func', function() LibStub('AceTimer-3.0'): ScheduleTimer( CloseHandler, 0 ) end
-					)
-				elseif type == 'YESNO' then
-					if #args2 > 0 then
-						cat:AddLine(
-							'text', 'Yes',
-							'justify', 'CENTER',
-							'textR', 0, 'textG', 1, 'textB', 0,
-							'func', callback,
-							unpack(args2)
-						)
-					else
-						cat:AddLine(
-							'text', 'Yes',
-							'justify', 'CENTER',
-							'textR', 0, 'textG', 1, 'textB', 0,
-							'func', callback
-						)
-					end
-
-					cat:AddLine(
-						'text', 'No',
-						'justify', 'CENTER',
-						'textR', 1, 'textG', 0, 'textB', 0,
-						'func', function() LibStub('AceTimer-3.0'): ScheduleTimer( CloseHandler, 0 ) end
-					)
-				end
-			end
-		)
-	else
-		tablet:Refresh(NAME .. '_Confirm')
-	end
+--clicking yes will call the callback function with args specified in ...
+function addon:ConfirmDialog2(msg, callback, data)
+	StaticPopupDialogs['fLib_Confirm_Dialog'] = {
+		text = msg,
+		button1 = 'Yes',
+		button2 = 'No',
+		OnAccept = function()
+			callback(data)
+		end,
+		timeout = 0,
+		whileDead = 1,
+		hideOnEscape = 0
+	}
 	
-	tablet:Open(NAME .. '_Confirm')
+	StaticPopup_Show('fLib_Confirm_Dialog')
 end
 
---[[
-Example of how to use ConfirmDialog
-function addon:TestPrint()
-	self:ConfirmDialog('are you sure you want to testprint?', 'YESNO', self.TestPrintCallback, self, 'difhid', 'dfihoid')
-end
 
-function addon:TestPrint2()
-	self:ConfirmDialog('are wsgw?', 'OK', self.TestPrintCallback, self, 'jjjjj', 'pppppp')
-end
 
-function addon:TestPrintCallback(x, y, callbackfromconfirmdialog)
-	print(tostring(self))
-	print('something printed by testprintcallback')
-	print('x='..tostring(x))
-		print('y='..tostring(y))
-			print('z='..tostring(z))
-	callbackfromconfirmdialog()
-end
---]]
+
+
+
+
+
+
+
 
 --- embedding and embed handling
 
@@ -358,7 +271,7 @@ local mixins = {
 	"ParseWords",
 	"ExtractItemId",
 	"DisbandRaid",
-	"ConfirmDialog"
+	"ConfirmDialog2"
 }
 
 -- addon:Embed( target )
