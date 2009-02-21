@@ -246,7 +246,10 @@ function addon:ConfirmDialog2(msg, callback, data)
 end
 
 
-
+--UTC time
+function addon.GetTimestamp()
+    return date('!%y/%m/%d %H:%M:%S')
+end
 
 
 
@@ -271,7 +274,7 @@ local mixins = {
 	"ParseWords",
 	"ExtractItemId",
 	"DisbandRaid",
-	"ConfirmDialog2"
+	"ConfirmDialog2",
 }
 
 -- addon:Embed( target )
