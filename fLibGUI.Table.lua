@@ -1,4 +1,6 @@
 fLibGUI.Table = {}
+local helper = {}
+local private = {}
 
 --returns a tableobj
 --a tableobj is a frame with these properties
@@ -66,8 +68,6 @@ function fLibGUI.Table.CreateTable(parentframe, width, height, colcount)
     return t
 end
 
-local helper = {}
-
 --t.columns - list of column frames
 --creates colcount column frames and stores them in t.columns
 --adds a header button and a resize button to each column frame
@@ -130,7 +130,7 @@ function helper.CreateColumns(t)
         end)
     end
     
-    t.ResetColumnFramePoints = TT.private.ResetColumnFramePoints
+    t.ResetColumnFramePoints = private.ResetColumnFramePoints
 end
 
 
@@ -148,7 +148,7 @@ function helper.CreateRows(t)
         ui.table = t
         ui.index = 0
         
-        ui:SetFrameLevel(4)
+        ui:SetFrameLevel(5)
         ui:GetFontString():SetJustifyH('LEFT')
         ui:SetHeight(t.rowheight)
         ui:SetWidth(t.width)
@@ -293,8 +293,6 @@ function helper.SetUIPoints(t)
         rowoffset = rowoffset + t.rowheight + t.separatorheight
     end
 end
-
-local private = {}
 
 function private.ResetColumnFramePoints(self)
     local t = self

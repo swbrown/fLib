@@ -17,18 +17,6 @@ function fLibGUI.CreateEmptyFrame(look, name, otherparent)
 	mw:RegisterForDrag('LeftButton')
 	--mw:SetResizable(true)
 	
-	--[[
-	local b = CreateFrame('button', nil, mw)
-	mw.ResizeCornerButton = b
-	b:SetPoint('BOTTOMRIGHT', -3, 3)
-	b:SetWidth(16)
-	b:SetHeight(16)
-	b:SetScript('OnMouseDown', function() this:GetParent():StartSizing() end)
-	--b:SetScript('OnLoad', function() this:GetNormalTexture():SetVertexColor(.6, .6, .6) end)
-	b:SetScript('OnMouseUp', function() this:GetParent():StopMovingOrSizing() end)
-	b:SetNormalTexture('Interface/AddOns/WowLua/images/resize')
-	--]]
-	
 	--Some functions for mainwindow		
 	function mw:Toggle()
 		if self:IsVisible() then
@@ -83,6 +71,8 @@ function fLibGUI.CreateEmptyFrame(look, name, otherparent)
 	return mw
 end
 
+
+
 --returns an empty clear frame, not draggable
 function fLibGUI.CreateClearFrame(parent)
 	local mw = CreateFrame('frame', nil, parent)
@@ -103,20 +93,24 @@ function fLibGUI.CreateClearFrame(parent)
 end
 
 
+
 function fLibGUI.CreateSeparator(parent)
 	--Separator
-	local tex = parent:CreateTexture(nil, 'OVERLAY')
-	tex:SetHeight(1)
-	tex:SetTexture(1,1,1,.2)
-	return tex
+	local ui = parent:CreateTexture(nil, 'OVERLAY')
+	ui:SetHeight(1)
+	ui:SetTexture(1,1,1,0.2)
+	return ui
 end
+
 
 --returns a blank fontstring
 function fLibGUI.CreateLabel(parent)
 	local fs = parent:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-	fs:SetAlpha(.6)
+	fs:SetAlpha(0.6)
 	return fs
 end
+
+
 
 --returns a blank checkbutton object
 function fLibGUI.CreateCheckButton(parent)
@@ -127,9 +121,11 @@ function fLibGUI.CreateCheckButton(parent)
     local fs = cb:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
     cb:SetFontString(fs)
     fs:SetPoint('LEFT', cb, 'RIGHT', 0, 0)
-    fs:SetAlpha(.6)
+    fs:SetAlpha(0.6)
     return cb
 end
+
+
 
 --returns a blank action button that highlights when hovered over
 function fLibGUI.CreateActionButton(parent)
@@ -137,7 +133,7 @@ function fLibGUI.CreateActionButton(parent)
 	local fs = b:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
 	b:SetFontString(fs)
 	fs:SetPoint('LEFT', 0,0)
-	fs:SetAlpha(.6)
+	fs:SetAlpha(0.6)
 	
 	local highlight = b:CreateTexture(nil, "BACKGROUND")
 	highlight:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
@@ -151,6 +147,8 @@ function fLibGUI.CreateActionButton(parent)
 	
 	return b
 end
+
+
 
 --returns the button that gets created
 --x,y point.  TOPLEFT relative to TOPLEFT
@@ -208,6 +206,8 @@ function fLibGUI.CreateCheck(parent)
 	return button
 end
 
+
+
 --returns an editbox with the width not set
 --text is the transparent label in the edit box
 function fLibGUI.CreateEditBox(parent, text)
@@ -243,6 +243,8 @@ function fLibGUI.CreateEditBox(parent, text)
 	return eb
 end
 
+
+
 function fLibGUI.CreateEditBox2(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
 	
@@ -276,6 +278,8 @@ function fLibGUI.CreateEditBox2(parent, text)
 	return eb
 end
 
+
+
 function fLibGUI.CreateEditBox3(parent, text)
 	local eb = CreateFrame('editbox', nil, parent)
 	
@@ -295,7 +299,7 @@ function fLibGUI.CreateEditBox3(parent, text)
 	
 	local label = eb:CreateFontString(nil, 'OVERLAY', 'GameFontHighlightSmallLeft')
 	eb.label = label
-	label:SetAlpha(0.1)
+	label:SetAlpha(0.5)
 	label:SetText(text)
 	label:SetPoint('LEFT', 5, 0)
 	label:Show()
