@@ -18,6 +18,9 @@ function fLibGUI.Table.CreateTable(parentframe, width, height, colcount)
     local t = fLibGUI.CreateClearFrame(parentframe)
     
     --Properties
+    t.resizebuttonwidth = 4
+    t.scrollbarwidth = 10
+    
     t.width = width
     t.height = height
     
@@ -30,9 +33,6 @@ function fLibGUI.Table.CreateTable(parentframe, width, height, colcount)
     
     --floor((height - headerheight - separator - bottompadding) / (rowheight + separator))
     t.rowcount = floor((t.height - t.headerheight - t.separatorheight - 4) / (t.rowheight + t.separatorheight))
-    
-    t.resizebuttonwidth = 4
-    t.scrollbarwidth = 10
     
     t.startingindex = 1
     t.selectedindex = 0
@@ -151,7 +151,7 @@ function helper.CreateRows(t)
         ui:SetFrameLevel(5)
         ui:GetFontString():SetJustifyH('LEFT')
         ui:SetHeight(t.rowheight)
-        ui:SetWidth(t.width)
+        ui:SetWidth(t.width - t.scrollbarwidth)
         
         ui.highlightspecial = ui:CreateTexture(nil, "BACKGROUND")
         ui.highlightspecial:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
@@ -193,7 +193,7 @@ function helper.CreateSeparators(t)
         --separator
         ui = fLibGUI.CreateSeparator(t)
         tinsert(t.separators, ui)
-        ui:SetWidth(t.width)
+        ui:SetWidth(t.width - t.scrollbarwidth)
     end
 end
 
@@ -220,7 +220,7 @@ function helper.CreateScrollBar(t)
     
     ui.table = t
     
-    ui:SetFrameLevel(5)
+    ui:SetFrameLevel(6)
     ui:SetOrientation('VERTICAL')
     ui:SetMinMaxValues(1, 1)
     ui:SetValueStep(1)
@@ -288,7 +288,7 @@ function helper.SetUIPoints(t)
         end
         
         --slider
-        t.slider:SetPoint('TOPRIGHT', t, 'TOPRIGHT', -5, -5)
+        t.slider:SetPoint('TOPRIGHT', t, 'TOPRIGHT', 0, -5)
         
         rowoffset = rowoffset + t.rowheight + t.separatorheight
     end
@@ -318,7 +318,7 @@ function private.ResetColumnFramePoints(self)
         end
         
         --calculate allowed width, current width
-        maxw = t.width - runningwidth - (t.mincolwidth * (#enabledcolumns - i))
+        maxw = t.width - t.scrollbarwidth - runningwidth - (t.mincolwidth * (#enabledcolumns - i))
         curw = currentframe:GetRight() - currentframe:GetLeft()
         --check if its larger than allowed width
         if curw > maxw then
@@ -332,7 +332,7 @@ function private.ResetColumnFramePoints(self)
     if #enabledcolumns > 0 then
         currentcol = enabledcolumns[#enabledcolumns]
         currentframe = t.columns[currentcol]
-        currentframe:SetPoint('TOPRIGHT', t, 'TOPLEFT', t.width + 5, -5)
+        currentframe:SetPoint('TOPRIGHT', t, 'TOPLEFT', t.width - t.scrollbarwidth, -5)
     end
 end
 
