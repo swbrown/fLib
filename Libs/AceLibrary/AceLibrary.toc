@@ -1,4 +1,8 @@
 ## Interface: 30000
+## X-Curse-Packaged-Version: r1094
+## X-Curse-Project-Name: Ace2
+## X-Curse-Project-ID: ace2
+## X-Curse-Repository-ID: wow/ace2/mainline
 
 ## Title: Lib: AceLibrary
 ## Notes: AddOn development framework

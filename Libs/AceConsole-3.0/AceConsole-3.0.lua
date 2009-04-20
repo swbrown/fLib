@@ -1,4 +1,15 @@
---[[ $Id: AceConsole-3.0.lua 629 2008-04-22 08:26:12Z ammo $ ]]
+--- **AceConsole-3.0** provides registration facilities for slash commands.
+-- You can register slash commands to your custom functions and use the `GetArgs` function to parse them
+-- to your addons individual needs.
+--
+-- **AceConsole-3.0** can be embeded into your addon, either explicitly by calling AceConsole:Embed(MyAddon) or by 
+-- specifying it as an embeded library in your AceAddon. All functions will be available on your addon object
+-- and can be accessed directly, without having to explicitly call AceConsole itself.\\
+-- It is recommended to embed AceConsole, otherwise you'll have to specify a custom `self` on all calls you
+-- make into AceConsole.
+-- @class file
+-- @name AceConsole-3.0
+-- @release $Id: AceConsole-3.0.lua 779 2009-04-05 08:52:46Z nevcairiel $
 local MAJOR,MINOR = "AceConsole-3.0", 6
 
 local AceConsole, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
@@ -19,9 +30,10 @@ local strfind = string.find
 local strsub = string.sub
 local max = math.max
 
--- AceConsole:Print( [chatframe,] ... )
---
--- Print to DEFAULT_CHAT_FRAME or given chatframe (anything with an .AddMessage member)
+--- Print to DEFAULT_CHAT_FRAME or given ChatFrame (anything with an .AddMessage function)
+-- @paramsig [chatframe ,] ...
+-- @param chatframe Custom ChatFrame to print to (or any frame with an .AddMessage function)
+-- @param ... List of any values to be printed
 function AceConsole:Print(...)
 	local text = ""
 	if self ~= AceConsole then
@@ -40,13 +52,10 @@ function AceConsole:Print(...)
 end
 
 
--- AceConsole:RegisterChatCommand(. command, func, persist )
---
--- command (string) - chat command to be registered WITHOUT leading "/"
--- func (function|membername) - function to call, or self[membername](self, ...) call
--- persist (boolean) - false: the command will be soft disabled/enabled when aceconsole is used as a mixin (default: true)
---
--- Register a simple chat command
+--- Register a simple chat command
+-- @param command Chat command to be registered WITHOUT leading "/"
+-- @param func Function to call when the slash command is being used (funcref or methodname)
+-- @param persist if false, the command will be soft disabled/enabled when aceconsole is used as a mixin (default: true)
 function AceConsole:RegisterChatCommand( command, func, persist )
 	if type(command)~="string" then error([[Usage: AceConsole:RegisterChatCommand( "command", func[, persist ]): 'command' - expected a string]], 2) end
 	
@@ -55,8 +64,8 @@ function AceConsole:RegisterChatCommand( command, func, persist )
 	local name = "ACECONSOLE_"..command:upper()
 	
 	if type( func ) == "string" then
-		SlashCmdList[name] = function(input)
-			self[func](self, input)
+		SlashCmdList[name] = function(input, editBox)
+			self[func](self, input, editBox)
 		end
 	else
 		SlashCmdList[name] = func
@@ -71,10 +80,8 @@ function AceConsole:RegisterChatCommand( command, func, persist )
 	return true
 end
 
-
--- AceConsole:UnregisterChatCommand( command )
--- 
--- Unregister a chatcommand
+--- Unregister a chatcommand
+-- @param command Chat command to be unregistered WITHOUT leading "/"
 function AceConsole:UnregisterChatCommand( command )
 	local name = AceConsole.commands[command]
 	if name then
@@ -85,6 +92,8 @@ function AceConsole:UnregisterChatCommand( command )
 	end
 end
 
+--- Get an iterator over all Chat Commands registered with AceConsole
+-- @return Iterator (pairs) over all commands
 function AceConsole:IterateChatCommands() return pairs(AceConsole.commands) end
 
 
@@ -99,18 +108,13 @@ local function nils(n, ...)
 end
 	
 
--- AceConsole:GetArgs(string, numargs, startpos)
---
--- Retreive one or more space-separated arguments from a string. 
+--- Retreive one or more space-separated arguments from a string. 
 -- Treats quoted strings and itemlinks as non-spaced.
---
---   string   - The raw argument string
---   numargs  - How many arguments to get (default 1)
---   startpos - Where in the string to start scanning (default  1)
---
--- Returns arg1, arg2, ..., nextposition
+-- @param string The raw argument string
+-- @param numargs How many arguments to get (default 1)
+-- @param startpos Where in the string to start scanning (default  1)
+-- @return Returns arg1, arg2, ..., nextposition\\
 -- Missing arguments will be returned as nils. 'nextposition' is returned as 1e9 at the end of the string.
-
 function AceConsole:GetArgs(str, numargs, startpos)
 	numargs = numargs or 1
 	startpos = max(startpos or 1, 1)
@@ -188,10 +192,8 @@ local mixins = {
 	"GetArgs",
 } 
 
--- AceConsole:Embed( target )
--- target (object) - target object to embed AceBucket in
---
 -- Embeds AceConsole into the target object making the functions from the mixins list available on target:..
+-- @param target target object to embed AceBucket in
 function AceConsole:Embed( target )
 	for k, v in pairs( mixins ) do
 		target[v] = self[v]

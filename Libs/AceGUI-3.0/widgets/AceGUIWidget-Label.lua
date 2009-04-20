@@ -5,12 +5,15 @@ local AceGUI = LibStub("AceGUI-3.0")
 --------------------------
 do
 	local Type = "Label"
-	local Version = 8
+	local Version = 10
 	
 	local function OnAcquire(self)
+		self:SetHeight(18)
+		self:SetWidth(200)
 		self:SetText("")
 		self:SetImage(nil)
 		self:SetColor()
+		self:SetFontObject()
 	end
 	
 	local function OnRelease(self)
@@ -90,6 +93,14 @@ do
 		UpdateImageAnchor(self)
 	end
 	
+	local function SetFont(self, font, height, flags)
+		self.label:SetFont(font, height, flags)
+	end
+	
+	local function SetFontObject(self, font)
+		self.label:SetFontObject(font or GameFontHighlightSmall)
+	end
+	
 	local function SetImageSize(self, width, height)
 		self.image:SetWidth(width)
 		self.image:SetHeight(height)
@@ -109,6 +120,8 @@ do
 		self.OnWidthSet = OnWidthSet
 		self.SetImage = SetImage
 		self.SetImageSize = SetImageSize
+		self.SetFont = SetFont
+		self.SetFontObject = SetFontObject
 		frame.obj = self
 		
 		frame:SetHeight(18)

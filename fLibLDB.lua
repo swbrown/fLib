@@ -73,7 +73,7 @@ function fLibLDB.OnClick(self, button)
 		--elseif BugSackFrame:IsShown() then
 			--BugSackFrame:Hide()
 		else
-			fRaid.GUI:Toggle()
+			fRaid.View()
 			--BugSack:ShowFrame("session")
 			--fDKP:OpenConfig()
 		end

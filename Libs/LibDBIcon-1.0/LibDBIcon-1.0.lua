@@ -1,6 +1,6 @@
 --[[
 Name: DBIcon-1.0
-Revision: $Rev: 5 $
+Revision: $Rev: 8 $
 Author(s): Rabbit (rabbit.magtheridon@gmail.com)
 Description: Allows addons to register to recieve a lightweight minimap icon as an alternative to more heavy LDB displays.
 Dependencies: LibStub
@@ -8,7 +8,7 @@ License: GPL v2 or later.
 ]]
 
 --[[
-Copyright (C) 2008 Rabbit
+Copyright (C) 2008-2009 Rabbit
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,15 +33,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 --
 
 local DBICON10 = "LibDBIcon-1.0"
-local DBICON10_MINOR = tonumber(("$Rev: 5 $"):match("(%d+)"))
+local DBICON10_MINOR = tonumber(("$Rev: 8 $"):match("(%d+)"))
 if not LibStub then error(DBICON10 .. " requires LibStub.") end
-local ldb = LibStub("LibDataBroker-1.1", true)
-if not ldb then error(DBICON10 .. " requires LibDataBroker-1.1.") end
 local lib = LibStub:NewLibrary(DBICON10, DBICON10_MINOR)
 if not lib then return end
+local ldb = LibStub("LibDataBroker-1.1", true)
+if not ldb then error(DBICON10 .. " requires LibDataBroker-1.1.") end
 
 lib.objects = lib.objects or {}
 lib.callbackRegistered = lib.callbackRegistered or nil
+lib.notCreated = lib.notCreated or {}
 
 function lib:IconCallback(event, name, key, value, dataobj)
 	if lib.objects[name] then
@@ -53,74 +54,33 @@ if not lib.callbackRegistered then
 	lib.callbackRegistered = true
 end
 
--- Tooltip code ripped from Fortress
+-- Tooltip code ripped from StatBlockCore by Funkydude
 local function getAnchors(frame)
-	local x, y = frame:GetCenter()
-	local xFrom, xTo = "", ""
-	local yFrom, yTo = "", ""
-	if x < GetScreenWidth() / 3 then
-		xFrom, xTo = "LEFT", "RIGHT"
-	elseif x > GetScreenWidth() / 3 then
-		xFrom, xTo = "RIGHT", "LEFT"
-	end
-	if y < GetScreenHeight() / 3 then
-		yFrom, yTo = "BOTTOM", "TOP"
-		return "BOTTOM"..xFrom, "TOP"..xTo
-	elseif y > GetScreenWidth() / 3 then
-		yFrom, yTo = "TOP", "BOTTOM"
-	end
-	local from = yFrom..xFrom
-	local to = yTo..xTo
-	return (from == "" and "CENTER" or from), (to == "" and "CENTER" or to)
-end
-
-local GameTooltip = GameTooltip
-local function GT_OnLeave()
-	GameTooltip:SetScript("OnLeave", GameTooltip.oldOnLeave)
-	GameTooltip:Hide()
-	GameTooltip:EnableMouse(false)
-end
-
-local function PrepareTooltip(frame, anchorFrame)
-	if frame == GameTooltip then
-		GameTooltip.oldOnLeave = GameTooltip:GetScript("OnLeave")
-		GameTooltip:EnableMouse(true)
-		GameTooltip:SetScript("OnLeave", GT_OnLeave)
-	end
-	frame:SetOwner(anchorFrame, "ANCHOR_NONE")
-	frame:ClearAllPoints()
-	local from, to = getAnchors(anchorFrame)
-	frame:SetPoint(from, anchorFrame, to)	
+	local x,y = frame:GetCenter()
+	if not x or not y then return "TOPLEFT", "BOTTOMLEFT" end
+	local hhalf = (x > UIParent:GetWidth()*2/3) and "RIGHT" or (x < UIParent:GetWidth()/3) and "LEFT" or ""
+	local vhalf = (y > UIParent:GetHeight()/2) and "TOP" or "BOTTOM"
+	return vhalf..hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP")..hhalf
 end
 
 local function onEnter(self)
-	local o = self.dataObject
-	if o.tooltip then
-		PrepareTooltip(o.tooltip, self)
-		if o.tooltiptext then
-			o.tooltip:SetText(o.tooltiptext)
-		end
-		o.tooltip:Show()
-	elseif o.OnTooltipShow then
-		PrepareTooltip(GameTooltip, self)
-		o.OnTooltipShow(GameTooltip)
+	local obj = self.dataObject
+	if not self.isMoving and obj.OnTooltipShow then
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint(getAnchors(self))
+		obj.OnTooltipShow(GameTooltip)
 		GameTooltip:Show()
-	elseif o.tooltiptext then
-		PrepareTooltip(GameTooltip, self)
-		GameTooltip:SetText(o.tooltiptext)
-		GameTooltip:Show()
+	elseif obj.OnEnter then
+		obj.OnEnter(self)
 	end
-	if o.OnEnter then o.OnEnter(self) end
 end
 
 local function onLeave(self)
-	local o = self.dataObject
-	if MouseIsOver(GameTooltip) and (o.tooltiptext or o.OnTooltipShow) then return end	
-	if o.tooltiptext or o.OnTooltipShow then
-		GT_OnLeave(GameTooltip)
-	end
-	if o.OnLeave then o.OnLeave(self) end
+	local obj = self.dataObject
+	GameTooltip:Hide()
+	if obj.OnLeave then obj.OnLeave(self) end
 end
+
 --------------------------------------------------------------------------------
 
 local minimapShapes = {
@@ -141,31 +101,20 @@ local minimapShapes = {
 }
 
 local function updatePosition(button)
-	local radius = button.db.radius or 80
-	local rounding = button.db.rounding or 10
-	local position = button.db.minimapPos or random(0, 360)
-	button.db.minimapPos = position
-	button.db.radius = radius
-
-	local angle = math.rad(position)
+	local angle = math.rad(button.db.minimapPos or 225)
 	local x, y, q = math.cos(angle), math.sin(angle), 1
 	if x < 0 then q = q + 1 end
 	if y > 0 then q = q + 2 end
 	local minimapShape = GetMinimapShape and GetMinimapShape() or "ROUND"
 	local quadTable = minimapShapes[minimapShape]
 	if quadTable[q] then
-		x, y = x*radius, y*radius
+		x, y = x*80, y*80
 	else
-		local diagRadius = math.sqrt(2*(radius)^2)-rounding
-		x = math.max(-radius, math.min(x*diagRadius, radius))
-		y = math.max(-radius, math.min(y*diagRadius, radius))
+		local diagRadius = 103.13708498985 --math.sqrt(2*(80)^2)-10
+		x = math.max(-80, math.min(x*diagRadius, 80))
+		y = math.max(-80, math.min(y*diagRadius, 80))
 	end
 	button:SetPoint("CENTER", Minimap, "CENTER", x, y)
-	if not button.db.hide then
-		button:Show()
-	else
-		button:Hide()
-	end
 end
 
 local function onClick(self, b) if self.dataObject.OnClick then self.dataObject.OnClick(self, b) end end
@@ -185,6 +134,7 @@ local function onDragStart(self)
 	self:LockHighlight()
 	self.icon:SetTexCoord(0, 1, 0, 1)
 	self:SetScript("OnUpdate", onUpdate)
+	self.isMoving = true
 	GameTooltip:Hide()
 end
 
@@ -192,20 +142,10 @@ local function onDragStop(self)
 	self:SetScript("OnUpdate", nil)
 	self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
 	self:UnlockHighlight()
+	self.isMoving = nil
 end
 
-local function updateAndKill(self, elapsed)
-	self.total = self.total + elapsed
-	if self.total <= 15 then 
-		updatePosition(self)
-		self:SetScript("OnUpdate", nil)
-	end
-end
-
-function lib:Register(name, object, db)
-	if not object.icon then error("Can't register LDB objects without icons set!") end
-	if lib.objects[name] then error("Already registered, nubcake.") end
-
+local function createButton(name, object, db)
 	local button = CreateFrame("Button", "LibDBIcon10_"..name, Minimap)
 	button.dataObject = object
 	button.db = db
@@ -234,14 +174,69 @@ function lib:Register(name, object, db)
 	button:SetScript("OnDragStop", onDragStop)
 	button:SetScript("OnMouseDown", onMouseDown)
 	button:SetScript("OnMouseUp", onMouseUp)
-	button:SetScript("OnUpdate", updateAndKill)
+
 	lib.objects[name] = button
-	updatePosition(button)
+
+	if lib.loggedIn then
+		updatePosition(button)
+		if not db.hide then button:Show()
+		else button:Hide() end
+	end
 end
 
-function lib:Hide(name) lib.objects[name]:Hide() end
-function lib:Show(name) lib.objects[name]:Show() end
+-- We could use a metatable.__index on lib.objects, but then we'd create
+-- the icons when checking things like :IsRegistered, which is not necessary.
+local function check(name)
+	if lib.notCreated[name] then
+		createButton(name, lib.notCreated[name][1], lib.notCreated[name][2])
+		lib.notCreated[name] = nil
+	end
+end
+
+lib.loggedIn = lib.loggedIn or false
+-- Wait a bit with the initial positioning to let any GetMinimapShape addons
+-- load up.
+if not lib.loggedIn then
+	local f = CreateFrame("Frame")
+	f:SetScript("OnEvent", function()
+		for _, object in pairs(lib.objects) do
+			updatePosition(object)
+			if not object.db.hide then object:Show()
+			else object:Hide() end
+		end
+		lib.loggedIn = true
+		f:SetScript("OnEvent", nil)
+		f = nil
+	end)
+	f:RegisterEvent("PLAYER_LOGIN")
+end
+
+function lib:Register(name, object, db)
+	if not object.icon then error("Can't register LDB objects without icons set!") end
+	if lib.objects[name] or lib.notCreated[name] then error("Already registered, nubcake.") end
+	if not db or not db.hide then
+		createButton(name, object, db)
+	else
+		lib.notCreated[name] = {object, db}
+	end
+end
+
+function lib:Hide(name)
+	check(name)
+	lib.objects[name]:Hide()
+end
+function lib:Show(name)
+	check(name)
+	lib.objects[name]:Show()
+	updatePosition(lib.objects[name])
+end
 function lib:IsRegistered(name)
-	return lib.objects[name] and true or false
+	return (lib.objects[name] or lib.notCreated[name]) and true or false
+end
+function lib:Refresh(name, db)
+	check(name)
+	local button = lib.objects[name]
+	if db then button.db = db end
+	updatePosition(button)
 end
 
