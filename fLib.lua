@@ -247,11 +247,24 @@ end
 
 
 --UTC time
-function addon.GetTimestamp()
-    return date('!%y/%m/%d %H:%M:%S')
+function addon.GetTimestamp(tsobj)
+	if tsobj then
+		return date('!%y/%m/%d %H:%M:%S', time(tsobj))
+	else
+    	return date('!%y/%m/%d %H:%M:%S')
+	end
 end
 
+function addon.GetTimestampObj()
+	return date('!*t')
+end
 
+function addon.AddDays(tsobj, daysnum)
+	local dayssec = daysnum*24*60*60
+	local startsec = time(tsobj)
+	local endsec = startsec + dayssec
+	return date('!*t', endsec)
+end
 
 
 
