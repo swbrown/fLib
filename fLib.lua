@@ -266,7 +266,14 @@ function addon.AddDays(tsobj, daysnum)
 	return date('!*t', endsec)
 end
 
-
+function addon.ExistsInList(list, item)
+	for id, curitem in ipairs(list) do
+		if item == curitem then
+			return id
+		end
+	end
+	return false
+end
 
 
 
