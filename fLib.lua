@@ -41,7 +41,7 @@ local defaults = {
 	},
 }
 
-local ace = LibStub("AceAddon-3.0"):NewAddon(NAME)
+local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceEvent-3.0")
 
 local options = {
 	type='group',
@@ -92,13 +92,27 @@ addon.options = options
 function ace:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New(DBNAME, defaults)
 	addon:Debug(DBNAME .. " loaded")
-	addon:Debug('printing global '.. DBNAME)
-	for key,val in pairs(addon.db.global) do
-		addon:Debug('key=' .. tostring(key) .. ',val=' .. tostring(val))
-	end
 	
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(NAME, options, {NAME})
+	
+	ace:RegisterEvent('CHAT_MSG_SYSTEM')
+	ace:RegisterEvent('CHAT_MSG_WHISPER')
+	ace:RegisterEvent('GUILD_ROSTER_UPDATE')
+	
+	GuildRoster()
 end
+
+function ace:CHAT_MSG_SYSTEM(...)
+	fLib.Guild.CHAT_MSG_SYSTEM(...)
+end
+function ace:CHAT_MSG_WHISPER(...)
+	fLib.Guild.CHAT_MSG_WHISPER(...)
+end
+function ace:GUILD_ROSTER_UPDATE()
+	fLib.Guild.GUILD_ROSTER_UPDATE()
+end
+
+
 
 --====================================================================================
 

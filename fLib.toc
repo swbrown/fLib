@@ -10,3 +10,4 @@ fLibLDB.lua
 fLibGUI.lua
 fLibGUI.Table.lua
 fLib.Who.lua
+fLib.Guild.lua
