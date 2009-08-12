@@ -93,12 +93,12 @@ function fLib.Guild.GUILD_ROSTER_UPDATE()
 end
 
 function fLib.Guild.GetInfo(name)
-	fLib.String.Capitalize(name)
+	name = fLib.String.Capitalize(name)
 	return groster[name]
 end
 
 function fLib.Guild.PrintInfo(name)
-	fLib.String.Capitalize(name)
+	name = fLib.String.Capitalize(name)
 	local info = groster[name]
 	if not info then
 		print(name .. ' is not in the guild.')
