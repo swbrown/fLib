@@ -1,7 +1,7 @@
 fLib.Who = {}
 local wholist = {} --list of people you've request info about
 --key = player name
---value = player info: rank, level, class, online, status
+--value = player info: guild, rank, level, class, online, status
 
 
 --returns info about name if we have it
