@@ -1,8 +1,13 @@
-fLib.Who = {}
-local wholist = {} --list of people you've request info about
---key = player name
---value = player info: guild, rank, level, class, online, status
+--a request for class
 
+fLib.Who = {}
+local whoqueue = {} --queue of players you are requesting
+--key = player name
+--value = callbackfunc, list of arguments
+
+local wholist = {} --list of players and their info 
+--key = player name
+--value = player info: guildname, level, race, class, zone, online, status
 
 --returns info about name if we have it
 --otherwise returns nil
@@ -12,4 +17,3 @@ function fLib.Who.Info(name)
 	end
 	return info
 end
-

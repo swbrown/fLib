@@ -38,10 +38,11 @@ local defaults = {
 			hide = false,
 			minimapPos = 180,
 		},
+		friends = {
+			tbr = {}
+		}
 	},
 }
-
-local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceEvent-3.0")
 
 local options = {
 	type='group',
@@ -89,17 +90,27 @@ local options = {
 }
 addon.options = options
 
+local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceEvent-3.0")--, "AceTimer-3.0")
+local timer1
+local TIMER_INTERVAL = 5 --secs
+
 function ace:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New(DBNAME, defaults)
 	addon:Debug(DBNAME .. " loaded")
 	
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(NAME, options, {NAME})
 	
-	ace:RegisterEvent('CHAT_MSG_SYSTEM')
-	ace:RegisterEvent('CHAT_MSG_WHISPER')
-	ace:RegisterEvent('GUILD_ROSTER_UPDATE')
+	--cleanup friends in your tbr
+	fLib.Friends.CleanUp()
+	
+	self:RegisterEvent('CHAT_MSG_SYSTEM')
+	self:RegisterEvent('CHAT_MSG_WHISPER')
+	self:RegisterEvent('GUILD_ROSTER_UPDATE')
+	self:RegisterEvent('FRIENDLIST_UPDATE')
 	
 	GuildRoster()
+
+	--timer1 = self:ScheduleRepeatingTimer(self["TimeUp"], TIMER_INTERVAL, self)
 end
 
 function ace:CHAT_MSG_SYSTEM(...)
@@ -107,12 +118,18 @@ function ace:CHAT_MSG_SYSTEM(...)
 end
 function ace:CHAT_MSG_WHISPER(...)
 	fLib.Guild.CHAT_MSG_WHISPER(...)
+	fLib.Friends.CHAT_MSG_WHISPER(...)
 end
 function ace:GUILD_ROSTER_UPDATE()
 	fLib.Guild.GUILD_ROSTER_UPDATE()
 end
+function ace:FRIENDLIST_UPDATE()
+	fLib.Friends.FRIENDLIST_UPDATE()
+end
 
-
+function ace:TimeUp()
+	
+end
 
 --====================================================================================
 

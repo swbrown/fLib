@@ -6,8 +6,10 @@
 
 embeds.xml
 fLib.lua
+fLib.String.lua
 fLibLDB.lua
 fLibGUI.lua
 fLibGUI.Table.lua
 fLib.Who.lua
 fLib.Guild.lua
+fLib.Friends.lua

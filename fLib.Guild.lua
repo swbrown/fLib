@@ -1,9 +1,11 @@
 fLib.Guild = {}
-local groster = {} --complete list of guildees
+local roster = {} --complete list of guildees
 --key = player name
 --value = player info: rank, level, class, online, status
+local total = 0
+local totalonline = 0
 
---watches for system messages that should affect groster
+--watches for system messages that should affect roster
 function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 	local words = fLib.String.ParseWords(msg)
 	local  name, info
@@ -18,21 +20,21 @@ function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 	if words[4] == 'offline.' then
 		--> update roster
 		name = words[1]
-		info = groster[name]
+		info = roster[name]
 		if info then
 			info.online = 0
 		end
 	elseif words[4] == 'online.' then
 		--> update roster
 		name = words[1]
-		info = groster[name]
+		info = roster[name]
 		if info then
 			info.online = 1
 		end
 	elseif words[3] == 'promoted' or words[3] == 'demoted' then
 		--> update roster
 		name = words[4]
-		info = groster[name]
+		info = roster[name]
 		if info then
 			local newrank = strsub(words[6], 1, #words[6] - 1)
 			info.rank = newrank
@@ -45,14 +47,14 @@ function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 		elseif words[3] == 'left' then
 			print('guild left detected')
 			name = words[1]
-			wipe(groster[name])
+			wipe(roster[name])
 			info = true
 		end
 	elseif words[8] == 'guild' then
 		if words[3] == 'kicked' then
 			--> update roster
 			name = words[1]
-			wipe(groster[name])
+			wipe(roster[name])
 			info = true
 		end
 	end
@@ -64,8 +66,8 @@ end
 
 function fLib.Guild.CHAT_MSG_WHISPER(eventName, msg, author)
 	--update the guildees online status if they whisper you
-	if groster[author] then
-		groster[author].online = 1
+	if roster[author] then
+		roster[author].online = 1
 	end
 end
 
@@ -74,32 +76,47 @@ function fLib.Guild.RefreshStatus()
 	GuildRoster()
 end
 
+--save the guild list into roster
 function fLib.Guild.GUILD_ROSTER_UPDATE()
-	wipe(groster)
+	wipe(roster)
+	total = 0
+	totalonline = 0
 	for i = 1, GetNumGuildMembers(true) do
 		local name, rank, rankIndex, level, class, zone, note, 
-		officernote, online, status, something = GetGuildRosterInfo(i)
+		officernote, online, status, _ = GetGuildRosterInfo(i)
 		
 		if name then
-			groster[name] = {
+			roster[name] = {
 				rank = rank,
 				level = level,
 				class = class,
+				zone = zone,
 				online = online,
 				status = status,
 			}
+			total = total + 1
+			if online then
+				totalonline = totalonline + 1
+			end
 		end
 	end
 end
 
+function fLib.Guild.Count(onlineonly)
+	if onlineonly then
+		return totalonline
+	end
+	return total
+end
+
 function fLib.Guild.GetInfo(name)
 	name = fLib.String.Capitalize(name)
-	return groster[name]
+	return roster[name]
 end
 
 function fLib.Guild.PrintInfo(name)
 	name = fLib.String.Capitalize(name)
-	local info = groster[name]
+	local info = roster[name]
 	if not info then
 		print(name .. ' is not in the guild.')
 	else
@@ -109,21 +126,3 @@ function fLib.Guild.PrintInfo(name)
 	end
 end
 
-fLib.String = {}
---Returns an array of words
---Multiple spaces count as only 1 space
-function fLib.String.ParseWords(str)
-	local savedwords = {}
-	for _, part in ipairs({strsplit(' ', str)}) do
-		if part ~= '' then
-			tinsert(savedwords, part)
-		end
-	end
-	
-	return savedwords
-end
-
---Returns the string with the first letter capitalized
-function fLib.String.Capitalize(str)
-	return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
-end
