@@ -15,7 +15,7 @@ function fLib.Friends.CHAT_MSG_WHISPER(eventName, msg, author)
 	end
 end
 
---making a call to GuildRoster() is the only way to refresh the status of guildees
+--making a call to ShowFriends() is the only way to refresh the status of friends
 function fLib.Friends.RefreshStatus()
 	ShowFriends()
 end
