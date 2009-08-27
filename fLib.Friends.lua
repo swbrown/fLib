@@ -5,6 +5,8 @@ local roster = {} --complete list of friends
 local total = 0
 local totalonline = 0
 
+local callbacks = {} --list of functions to callback after refreshstatus
+
 --fLib.db.global.friends.tbr
 ----list of names to remove from friend list when you login
 
@@ -16,7 +18,10 @@ function fLib.Friends.CHAT_MSG_WHISPER(eventName, msg, author)
 end
 
 --making a call to ShowFriends() is the only way to refresh the status of friends
-function fLib.Friends.RefreshStatus()
+function fLib.Friends.RefreshStatus(func)
+	if not fLib.ExistsInList(callbacks, func) then
+		tinsert(callbacks, func)
+	end
 	ShowFriends()
 end
 
@@ -51,6 +56,12 @@ function fLib.Friends.FRIENDLIST_UPDATE()
 				totalonline = totalonline + 1
 			end
 		end
+	end
+	
+	--callbacks
+	while #callbacks > 0 do
+		local func = tremove(callbacks, 1)
+		func()
 	end
 end
 

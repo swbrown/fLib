@@ -109,8 +109,6 @@ function ace:OnInitialize()
 	self:RegisterEvent('FRIENDLIST_UPDATE')
 	
 	GuildRoster()
-
-	--timer1 = self:ScheduleRepeatingTimer(self["TimeUp"], TIMER_INTERVAL, self)
 end
 
 function ace:CHAT_MSG_SYSTEM(...)
@@ -127,10 +125,6 @@ function ace:FRIENDLIST_UPDATE()
 	fLib.Friends.FRIENDLIST_UPDATE()
 end
 
-function ace:TimeUp()
-	
-end
-
 --====================================================================================
 
 --Functions in my library
@@ -138,10 +132,10 @@ end
 --Outputs message to the chat window when debug is turned on
 --note: in order for AceConsole-3.0 to print the addon name in pretty color, the addon needs to have a metatable
 --with the __tostring function set to return the addon name
-function addon:Debug(msg)
+function addon:Debug(...)
 	if self.db and self.db.global and self.db.global.debug then
 		if self.Print then
-			self:Print(tostring(msg))
+			self:Print(...)
 		else
 			LibStub('AceConsole-3.0'):Print(self, msg)
 		end
@@ -286,15 +280,61 @@ function addon.GetTimestamp(tsobj)
 	end
 end
 
-function addon.GetTimestampObj()
-	return date('!*t')
+function addon.GetTimestampObj(tsstring)
+	if not tsstring or tsstring == '' then
+		return date('!*t')
+	else
+		local dat, tim = strsplit(' ', tsstring)
+		local y, m, d = strsplit('/', dat)
+		local H, M, S = strsplit(':', tim)
+		
+		y = tonumber(y)
+		m = tonumber(m)
+		d = tonumber(d)
+		H = tonumber(H)
+		M = tonumber(M)
+		S = tonumber(S)
+		if y > 12 then
+			y = 1900 + y
+		else
+			y = 2000 + y
+		end
+		
+		local tsobj = date('!*t')
+		tsobj.year = y
+		tsobj.month = m
+		tsobj.day = d
+		tsobj.hour = H
+		tsobj.min = M
+		tsobj.sec = S
+		
+		return tsobj
+	end
 end
 
 function addon.AddDays(tsobj, daysnum)
+	if not tsobj then tsobj = fLib.GetTimestampObj() end
 	local dayssec = daysnum*24*60*60
 	local startsec = time(tsobj)
 	local endsec = startsec + dayssec
 	return date('!*t', endsec)
+end
+function addon.AddMinutes(tsobj, minsnum)
+	if not tsobj then tsobj = fLib.GetTimestampObj() end
+	local minssec = minsnum * 60
+	local startsec = time(tsobj)
+	local endsec = startsec + minssec
+	return date('!*t', endsec)
+end
+
+function addon.T1MinusT2ToMinutes(t1str, t2str)
+	local sec1 = time(fLib.GetTimestampObj(t1str))
+	local sec2 = time(fLib.GetTimestampObj(t2str))
+	
+	local diff = sec1 - sec2
+	diff = ceil(diff/60)
+	
+	return diff
 end
 
 function addon.ExistsInList(list, item)

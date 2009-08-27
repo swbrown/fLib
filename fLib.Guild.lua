@@ -5,6 +5,8 @@ local roster = {} --complete list of guildees
 local total = 0
 local totalonline = 0
 
+local callbacks = {} --list of functions to callback after refreshstatus
+
 --watches for system messages that should affect roster
 function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 	local words = fLib.String.ParseWords(msg)
@@ -72,7 +74,10 @@ function fLib.Guild.CHAT_MSG_WHISPER(eventName, msg, author)
 end
 
 --making a call to GuildRoster() is the only way to refresh the status of guildees
-function fLib.Guild.RefreshStatus()
+function fLib.Guild.RefreshStatus(func)
+	if not fLib.ExistsInList(callbacks, func) then
+		tinsert(callbacks, func)
+	end
 	GuildRoster()
 end
 
@@ -99,6 +104,12 @@ function fLib.Guild.GUILD_ROSTER_UPDATE()
 				totalonline = totalonline + 1
 			end
 		end
+	end
+	
+	--callbacks
+	while #callbacks > 0 do
+		local func = tremove(callbacks, 1)
+		func()
 	end
 end
 
