@@ -73,6 +73,7 @@ function fLib.Friends.Count(onlineonly)
 end
 
 function fLib.Friends.GetInfo(name)
+	if name == '' then return nil end
 	name = fLib.String.Capitalize(name)
 	local info = roster[name]
 	if not info then
