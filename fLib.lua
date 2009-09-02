@@ -101,7 +101,7 @@ function ace:OnInitialize()
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(NAME, options, {NAME})
 	
 	--cleanup friends in your tbr
-	fLib.Friends.CleanUp()
+	--fLib.Friends.CleanUp() --might cause crash?
 	
 	self:RegisterEvent('CHAT_MSG_SYSTEM')
 	self:RegisterEvent('CHAT_MSG_WHISPER')
@@ -270,8 +270,11 @@ function addon:ConfirmDialog2(msg, callback, data)
 	StaticPopup_Show('fLib_Confirm_Dialog')
 end
 
-
---UTC time
+--tsobj, expected computer time or nil
+--returns string in universal time
+--warning: time(tsobj) returns seconds based on computer's time, so
+----it expects tsobj to be in computer time also.
+--date(format), the ! in the format converts computer time to universal time
 function addon.GetTimestamp(tsobj)
 	if tsobj then
 		return date('!%y/%m/%d %H:%M:%S', time(tsobj))
@@ -280,56 +283,60 @@ function addon.GetTimestamp(tsobj)
 	end
 end
 
-function addon.GetTimestampObj(tsstring)
-	if not tsstring or tsstring == '' then
-		return date('!*t')
-	else
-		local dat, tim = strsplit(' ', tsstring)
-		local y, m, d = strsplit('/', dat)
-		local H, M, S = strsplit(':', tim)
-		
-		y = tonumber(y)
-		m = tonumber(m)
-		d = tonumber(d)
-		H = tonumber(H)
-		M = tonumber(M)
-		S = tonumber(S)
-		if y > 12 then
-			y = 1900 + y
-		else
-			y = 2000 + y
-		end
-		
-		local tsobj = date('!*t')
-		tsobj.year = y
-		tsobj.month = m
-		tsobj.day = d
-		tsobj.hour = H
-		tsobj.min = M
-		tsobj.sec = S
-		
-		return tsobj
-	end
+--returns computer time object (can be used in time(obj))
+function addon.GetTimestampObj()
+	return date('*t') --computer time
 end
 
+--tsobj, expected computer time or nil
+--returns computer time
 function addon.AddDays(tsobj, daysnum)
 	if not tsobj then tsobj = fLib.GetTimestampObj() end
 	local dayssec = daysnum*24*60*60
 	local startsec = time(tsobj)
 	local endsec = startsec + dayssec
-	return date('!*t', endsec)
+	return date('*t', endsec)
 end
 function addon.AddMinutes(tsobj, minsnum)
 	if not tsobj then tsobj = fLib.GetTimestampObj() end
 	local minssec = minsnum * 60
 	local startsec = time(tsobj)
 	local endsec = startsec + minssec
-	return date('!*t', endsec)
+	return date('*t', endsec)
+end
+
+function addon.ConvertTimeStringToObject(tstr)
+	local dat, tim = strsplit(' ', tstr)
+	local y, m, d = strsplit('/', dat)
+	local H, M, S = strsplit(':', tim)
+	
+	y = tonumber(y)
+	m = tonumber(m)
+	d = tonumber(d)
+	H = tonumber(H)
+	M = tonumber(M)
+	S = tonumber(S)
+	if y > 12 then
+		y = 1900 + y
+	else
+		y = 2000 + y
+	end
+	
+	local tsobj = date('*t')
+	tsobj.year = y
+	tsobj.month = m
+	tsobj.day = d
+	tsobj.hour = H
+	tsobj.min = M
+	tsobj.sec = S
+	
+	return tsobj
 end
 
 function addon.T1MinusT2ToMinutes(t1str, t2str)
-	local sec1 = time(fLib.GetTimestampObj(t1str))
-	local sec2 = time(fLib.GetTimestampObj(t2str))
+	--convert time strings to data table
+	local sec1 = time(fLib.ConvertTimeStringToObject(t1str))
+	local sec2 = time(fLib.ConvertTimeStringToObject(t2str))
 	
 	local diff = sec1 - sec2
 	diff = ceil(diff/60)

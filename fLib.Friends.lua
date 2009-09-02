@@ -2,6 +2,7 @@ fLib.Friends = {}
 local roster = {} --complete list of friends
 --key = player name
 --value = player info: guild, level, class, online, status
+local rosterloadedonce = false
 local total = 0
 local totalonline = 0
 
@@ -58,6 +59,8 @@ function fLib.Friends.FRIENDLIST_UPDATE()
 		end
 	end
 	
+	rosterloadedonce = true
+	
 	--callbacks
 	while #callbacks > 0 do
 		local func = tremove(callbacks, 1)
@@ -77,8 +80,12 @@ function fLib.Friends.GetInfo(name)
 	name = fLib.String.Capitalize(name)
 	local info = roster[name]
 	if not info then
-		AddFriend(name)
-		tinsert(fLib.db.global.friends.tbr, name)
+		if rosterloadedonce then
+			AddFriend(name)
+			tinsert(fLib.db.global.friends.tbr, name)
+		else
+			ShowFriends()
+		end
 	end
 	return info
 end
