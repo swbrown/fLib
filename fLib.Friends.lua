@@ -38,6 +38,7 @@ end
 
 --save your friends list into roster
 function fLib.Friends.FRIENDLIST_UPDATE()
+	fLib:Debug("fLib.Friends.FRIENDLIST_UPDATE")
 	wipe(roster)
 	total = 0
 	totalonline = 0

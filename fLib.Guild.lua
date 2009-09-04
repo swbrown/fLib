@@ -83,6 +83,7 @@ end
 
 --save the guild list into roster
 function fLib.Guild.GUILD_ROSTER_UPDATE()
+	fLib:Debug("fLib.Guild.GUILD_ROSTER_UPDATE")
 	wipe(roster)
 	total = 0
 	totalonline = 0
