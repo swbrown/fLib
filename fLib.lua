@@ -233,7 +233,11 @@ end
 
 --Returns the string with the first letter capitalized
 function addon:Capitalize(str)
-	return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
+	if str then
+		return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
+	else
+		return ''
+	end
 end
 
 function addon:ExtractItemId(itemlink)
