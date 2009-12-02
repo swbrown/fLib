@@ -90,7 +90,8 @@ local options = {
 }
 addon.options = options
 
-local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceEvent-3.0")--, "AceTimer-3.0")
+local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceEvent-3.0", "AceTimer-3.0")
+fLib.ace = ace
 local timer1
 local TIMER_INTERVAL = 5 --secs
 
@@ -312,7 +313,12 @@ end
 function addon.ConvertTimeStringToObject(tstr)
 	local dat, tim = strsplit(' ', tstr)
 	local y, m, d = strsplit('/', dat)
-	local H, M, S = strsplit(':', tim)
+	local H, M, S
+	if tim then
+	 	H, M, S = strsplit(':', tim)
+	else
+		H, M, S = 0, 0, 0
+	end
 	
 	y = tonumber(y)
 	m = tonumber(m)

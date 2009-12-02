@@ -81,10 +81,10 @@ function fLib.Friends.GetInfo(name)
 	name = fLib.String.Capitalize(name)
 	local info = roster[name]
 	if not info then
-		if rosterloadedonce then
+		if rosterloadedonce and fLib.Guild.LoadedOnce then
 			AddFriend(name)
 			tinsert(fLib.db.global.friends.tbr, name)
-		else
+		elseif fLib.Guild.LoadedOnce then
 			ShowFriends()
 		end
 	end

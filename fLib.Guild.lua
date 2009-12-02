@@ -7,6 +7,16 @@ local totalonline = 0
 
 local callbacks = {} --list of functions to callback after refreshstatus
 
+--queue of names to demote/promote
+local demotequeue = {}
+local promotequeue = {}
+
+fLib.Guild.Roster = roster
+
+function fLib.Guild.TimeUp()
+	fLib.Guild.DoMotes()
+end
+
 --watches for system messages that should affect roster
 function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 	local words = fLib.String.ParseWords(msg)
@@ -41,6 +51,19 @@ function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 			local newrank = strsub(words[6], 1, #words[6] - 1)
 			info.rank = newrank
 		end
+		
+		--remove from demote/promote queue if necessary
+		local num = fLib.ExistsInList(demotequeue, name)
+		if num and words[3] == 'demoted' then
+			tremove(demotequeue, num)
+		end
+		
+		num = fLib.ExistsInList(promotequeue, name)
+		if num and words[3] == 'promoted' then
+			tremove(promotequeue, num)
+		end
+		
+		fLib.Guild.DoMotes()
 	elseif words[5] == 'guild.' then
 		if words[3] == 'joined' then
 			print('guild join detected')
@@ -107,6 +130,9 @@ function fLib.Guild.GUILD_ROSTER_UPDATE()
 		end
 	end
 	
+	fLib.Guild.LoadedOnce = true
+	fLib.Guild.LastLoadedTime = fLib.GetTimestamp()
+	
 	--callbacks
 	while #callbacks > 0 do
 		local func = tremove(callbacks, 1)
@@ -138,3 +164,48 @@ function fLib.Guild.PrintInfo(name)
 	end
 end
 
+function fLib.Guild.ConfirmMotions(func)
+	fLib.Guild.ConfirmMotionsEndFunc = func
+	--making a timer that will call DoMotes every some minutes in case
+	--a promotion or demotion fails
+	--which is hopefully really unlikely
+	if not fLib.Guild.MoteTimer then
+		fLib.Guild.MoteTimer = fLib.ace:ScheduleRepeatingTimer(fLib.Guild.TimeUp, 180) --secs
+	end
+	fLib.Guild.DoMotes()
+end
+
+function fLib.Guild.DoMotes()
+	--demote/promote the next person in the queue
+	if #demotequeue > 0 then
+		GuildDemote(demotequeue[1])
+	elseif #promotequeue > 0 then
+		GuildPromote(promotequeue[1])
+	else
+		fLib.ace:CancelTimer(fLib.Guild.MoteTimer, true)
+		if fLib.Guild.ConfirmMotionsEndFunc then
+			fLib.Guild.ConfirmMotionsEndFunc()
+			fLib.Guild.ConfirmMotionsEndFunc = nil
+		end
+	end
+end
+
+function fLib.Guild.Demote(name)
+	tinsert(demotequeue, name)
+end
+
+function fLib.Guild.Promote(name)
+	tinsert(promotequeue, name)
+end
+
+function fLib.Guild.PrintQueue()
+	local msg = ""
+	for _, name in ipairs(demotequeue) do
+		msg = msg .. name .. ","
+	end
+	
+	for _, name in ipairs(promotequeue) do
+		msg = msg .. name .. ","
+	end
+	fLib.ace:Print(msg)
+end

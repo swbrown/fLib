@@ -15,5 +15,8 @@ end
 
 --Returns the string with the first letter capitalized
 function fLib.String.Capitalize(str)
-	return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
+	if str and #str > 0 then
+		return strupper(strsub(str,1,1)) .. strsub(str,2,#str)
+	end
+	return ''
 end
