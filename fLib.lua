@@ -90,7 +90,7 @@ local options = {
 }
 addon.options = options
 
-local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceEvent-3.0", "AceTimer-3.0")
+local ace = LibStub("AceAddon-3.0"):NewAddon(NAME, "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
 fLib.ace = ace
 local timer1
 local TIMER_INTERVAL = 5 --secs
@@ -142,6 +142,7 @@ function addon:Debug(...)
 		end
 	end
 end
+
 
 --Send a whisper
 function addon:Whisper(name, msg)
