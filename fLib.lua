@@ -146,7 +146,8 @@ end
 
 --Send a whisper
 function addon:Whisper(name, msg)
-	SendChatMessage("[" .. self.name .. "] " .. msg, "WHISPER", nil, name)
+	--SendChatMessage("[" .. self.name .. "] " .. msg, "WHISPER", nil, name)
+	fLib.Com.Whisper("[" .. self.name .. "] " .. msg, name)
 end
 
 --AceConfig options handler
