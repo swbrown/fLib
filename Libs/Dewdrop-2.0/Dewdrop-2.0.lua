@@ -210,7 +210,7 @@ local function secureFrame_Hide(self)
 end
 
 secureFrame:SetScript("OnEvent",
-	function()
+	function(this)
 		if event=="PLAYER_REGEN_ENABLED" then
 			this.combat = false
 			if not this:IsShown() and this.owner then
@@ -228,7 +228,7 @@ secureFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 secureFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 secureFrame:SetScript("OnLeave",
-	function()
+	function(this)
 		local owner=this.owner
 		this:Deactivate()
 		owner:GetScript("OnLeave")()
@@ -236,7 +236,7 @@ secureFrame:SetScript("OnLeave",
 )
 
 secureFrame:HookScript("OnClick",
-	function()
+	function(this)
 		local realthis = this
 		this = this.owner
 		this:GetScript("OnClick")()
@@ -611,7 +611,7 @@ local function AcquireButton(self, level)
 		radioHighlight:SetBlendMode("ADD")
 		radioHighlight:SetTexCoord(0.5, 0.75, 0, 1)
 		radioHighlight:Hide()
-		button:SetScript("OnEnter", function()
+		button:SetScript("OnEnter", function(this)
 			if (sliderFrame and sliderFrame:IsShown() and sliderFrame.mouseDown and sliderFrame.level == this.level.num + 1) or (editBoxFrame and editBoxFrame:IsShown() and editBoxFrame.mouseDown and editBoxFrame.level == this.level.num + 1) then
 				for i = 1, this.level.num do
 					Refresh(self, levels[i])
@@ -648,12 +648,12 @@ local function AcquireButton(self, level)
 			end
 			showGameTooltip(this)
 		end)
-		button:SetScript("OnHide", function()
+		button:SetScript("OnHide", function(this)
 			if this.secure and secureFrame:IsOwnedBy(this) then
 				secureFrame:Deactivate()
 			end
 		end)
-		button:SetScript("OnLeave", function()
+		button:SetScript("OnLeave", function(this)
 			if this.secure and secureFrame:IsShown() then
 				return;	-- it's ok, we didn't actually mouse out of the button, only onto the secure frame on top of it
 			end
@@ -668,7 +668,7 @@ local function AcquireButton(self, level)
 			GameTooltip:Hide()
 		end)
 		local first = true
-		button:SetScript("OnClick", function()
+		button:SetScript("OnClick", function(this)
 			if not this.disabled then
 				if this.hasColorSwatch then
 					local func = button.colorFunc
@@ -762,12 +762,12 @@ local function AcquireButton(self, level)
 		button.text = text
 		text:SetFontObject(GameFontHighlightSmall)
 		button.text:SetFont(STANDARD_TEXT_FONT, UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
-		button:SetScript("OnMouseDown", function()
+		button:SetScript("OnMouseDown", function(this)
 			if not this.disabled and (this.func or this.colorFunc or this.closeWhenClicked) then
 				text:SetPoint("LEFT", button, "LEFT", this.notCheckable and 1 or 25, -1)
 			end
 		end)
-		button:SetScript("OnMouseUp", function()
+		button:SetScript("OnMouseUp", function(this)
 			if not this.disabled and (this.func or this.colorFunc or this.closeWhenClicked) then
 				text:SetPoint("LEFT", button, "LEFT", this.notCheckable and 0 or 24, 0)
 			end
@@ -865,7 +865,7 @@ local function AcquireLevel(self, level)
 			frame:SetWidth(180)
 			frame:SetHeight(10)
 			frame:SetFrameLevel(i * 3)
-			frame:SetScript("OnHide", function()
+			frame:SetScript("OnHide", function(this)
 				self:Close(level + 1)
 			end)
 			if frame.SetTopLevel then
@@ -890,16 +890,16 @@ local function AcquireLevel(self, level)
 			))
 			backdrop:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b)
 			backdrop:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
-			frame:SetScript("OnClick", function()
+			frame:SetScript("OnClick", function(this)
 				self:Close(i)
 			end)
-			frame:SetScript("OnEnter", function()
+			frame:SetScript("OnEnter", function(this)
 				StopCounting(self, i)
 			end)
-			frame:SetScript("OnLeave", function()
+			frame:SetScript("OnLeave", function(this)
 				StartCounting(self, i)
 			end)
-			frame:SetScript("OnMouseWheel", function()
+			frame:SetScript("OnMouseWheel", function(this)
 				Scroll(self, frame, arg1 < 0)
 			end)
 			if i == 1 then
@@ -1997,7 +1997,7 @@ function OpenSlider(self, parent)
 
 		local changed = false
 		local inside = false
-		slider:SetScript("OnValueChanged", function()
+		slider:SetScript("OnValueChanged", function(this)
 			if sliderFrame.changing then
 				return
 			end
@@ -2064,15 +2064,15 @@ function OpenSlider(self, parent)
 				end
 			end
 		end)
-		local function onEnter()
+		local function onEnter(this)
 			StopCounting(self, sliderFrame.level)
 			showGameTooltip(sliderFrame.parent)
 		end
-		local function onLeave()
+		local function onLeave(this)
 			GameTooltip:Hide()
 		end
 		sliderFrame:SetScript("OnEnter", onEnter)
-		sliderFrame:SetScript("OnLeave", function()
+		sliderFrame:SetScript("OnLeave", function(this)
 			GameTooltip:Hide()
 			if changed then
 				local parent = sliderFrame.parent
@@ -2096,11 +2096,11 @@ function OpenSlider(self, parent)
 		end)
 		editBox:SetScript("OnEnter", onEnter)
 		editBox:SetScript("OnLeave", onLeave)
-		slider:SetScript("OnMouseDown", function()
+		slider:SetScript("OnMouseDown", function(this)
 			sliderFrame.mouseDown = true
 			GameTooltip:Hide()
 		end)
-		slider:SetScript("OnMouseUp", function()
+		slider:SetScript("OnMouseUp", function(this)
 			sliderFrame.mouseDown = false
 			if changed--[[ and not inside]] then
 				local parent = sliderFrame.parent
@@ -2125,12 +2125,12 @@ function OpenSlider(self, parent)
 				showGameTooltip(sliderFrame.parent)
 			end
 		end)
-		slider:SetScript("OnEnter", function()
+		slider:SetScript("OnEnter", function(this)
 			inside = true
 			StopCounting(self, sliderFrame.level)
 			showGameTooltip(sliderFrame.parent)
 		end)
-		slider:SetScript("OnLeave", function()
+		slider:SetScript("OnLeave", function(this)
 			inside = false
 			GameTooltip:Hide()
 			if changed and not sliderFrame.mouseDown then
@@ -2211,7 +2211,7 @@ function OpenSlider(self, parent)
 
 			StartCounting(self, sliderFrame.level)
 		end)
-		editBox:SetScript("OnEscapePressed", function()
+		editBox:SetScript("OnEscapePressed", function(this)
 			self:Close(sliderFrame.level)
 			StartCounting(self, sliderFrame.level)
 		end)
@@ -2382,7 +2382,7 @@ function OpenEditBox(self, parent)
 		right:SetHeight(32)
 		right:SetPoint("RIGHT", editBox, "RIGHT", 10, 0)
 
-		editBox:SetScript("OnEnterPressed", function()
+		editBox:SetScript("OnEnterPressed", function(this)
 			if editBoxFrame.parent and editBoxFrame.parent.editBoxValidateFunc then
 				local t = editBox.realText or editBox:GetText() or ""
 				local result = editBoxFrame.parent.editBoxValidateFunc(getArgs(editBoxFrame.parent, 'editBoxValidateArg', 1, t))
@@ -2404,7 +2404,7 @@ function OpenEditBox(self, parent)
 			end
 			StartCounting(self, editBoxFrame.level-1)
 		end)
-		editBox:SetScript("OnEscapePressed", function()
+		editBox:SetScript("OnEscapePressed", function(this)
 			self:Close(editBoxFrame.level)
 			StartCounting(self, editBoxFrame.level-1)
 		end)
@@ -2440,7 +2440,7 @@ function OpenEditBox(self, parent)
 			end
 		end
 
-		editBox:SetScript("OnTextChanged", function()
+		editBox:SetScript("OnTextChanged", function(this)
 			if skipNext then
 				skipNext = false
 			elseif not changing and editBoxFrame.parent and editBoxFrame.parent.editBoxChangeFunc then
@@ -2454,18 +2454,18 @@ function OpenEditBox(self, parent)
 				end
 			end
 		end)
-		editBoxFrame:SetScript("OnEnter", function()
+		editBoxFrame:SetScript("OnEnter", function(this)
 			StopCounting(self, editBoxFrame.level)
 			showGameTooltip(editBoxFrame.parent)
 		end)
-		editBoxFrame:SetScript("OnLeave", function()
+		editBoxFrame:SetScript("OnLeave", function(this)
 			GameTooltip:Hide()
 		end)
-		editBox:SetScript("OnEnter", function()
+		editBox:SetScript("OnEnter", function(this)
 			StopCounting(self, editBoxFrame.level)
 			showGameTooltip(editBoxFrame.parent)
 		end)
-		editBox:SetScript("OnLeave", function()
+		editBox:SetScript("OnLeave", function(this)
 			GameTooltip:Hide()
 		end)
 		editBoxFrame:SetScript("OnKeyDown", function(this, a1)

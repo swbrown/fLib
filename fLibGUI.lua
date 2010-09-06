@@ -28,7 +28,7 @@ function fLibGUI.CreateEmptyFrame(look, name, otherparent)
 	
 	--Scripts for mainwindow
 	if name and name ~= '' then
-		mw:SetScript('OnShow', function()
+		mw:SetScript('OnShow', function(this)
 			tinsert(UISpecialFrames,this:GetName())
 		end)
 	end	
@@ -236,10 +236,10 @@ function fLibGUI.CreateEditBox(parent, text)
 	
 	eb:SetHeight(label:GetHeight() + 6)
 	
-	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
-	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
-	eb:SetScript('OnEditFocusGained', function() this:HighlightText() end)
-	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
+	eb:SetScript('OnEnterPressed', function(this) this:ClearFocus() end)
+	eb:SetScript('OnEscapePressed', function(this) this:ClearFocus() end)
+	eb:SetScript('OnEditFocusGained', function(this) this:HighlightText() end)
+	eb:SetScript('OnEditFocusLost', function(this) this:HighlightText(0,0) end)	
 	return eb
 end
 
@@ -271,10 +271,10 @@ function fLibGUI.CreateEditBox2(parent, text)
 	
 	eb:SetHeight(label:GetHeight() + 4)
 	
-	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
-	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
-	eb:SetScript('OnEditFocusGained', function() this:HighlightText() end)
-	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
+	eb:SetScript('OnEnterPressed', function(this) this:ClearFocus() end)
+	eb:SetScript('OnEscapePressed', function(this) this:ClearFocus() end)
+	eb:SetScript('OnEditFocusGained', function(this) this:HighlightText() end)
+	eb:SetScript('OnEditFocusLost', function(this) this:HighlightText(0,0) end)	
 	return eb
 end
 
@@ -306,9 +306,9 @@ function fLibGUI.CreateEditBox3(parent, text)
 	
 	eb:SetHeight(label:GetHeight() + 4)
 	
-	eb:SetScript('OnEnterPressed', function() this:ClearFocus() end)
-	eb:SetScript('OnEscapePressed', function() this:ClearFocus() end)
-	eb:SetScript('OnEditFocusGained', function() this:HighlightText() end)
-	eb:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
+	eb:SetScript('OnEnterPressed', function(this) this:ClearFocus() end)
+	eb:SetScript('OnEscapePressed', function(this) this:ClearFocus() end)
+	eb:SetScript('OnEditFocusGained', function(this) this:HighlightText() end)
+	eb:SetScript('OnEditFocusLost', function(this) this:HighlightText(0,0) end)	
 	return eb
 end

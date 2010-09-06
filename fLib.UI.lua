@@ -312,10 +312,10 @@ function fLib.UI.EditBox.New(parent, style)
 	end
 	
 	
-	ui:SetScript('OnEnterPressed', function() this:ClearFocus() end)
-	ui:SetScript('OnEscapePressed', function() this:ClearFocus() end)
-	ui:SetScript('OnEditFocusGained', function() this:HighlightText() end)
-	ui:SetScript('OnEditFocusLost', function() this:HighlightText(0,0) end)	
+	ui:SetScript('OnEnterPressed', function(this) this:ClearFocus() end)
+	ui:SetScript('OnEscapePressed', function(this) this:ClearFocus() end)
+	ui:SetScript('OnEditFocusGained', function(this) this:HighlightText() end)
+	ui:SetScript('OnEditFocusLost', function(this) this:HighlightText(0,0) end)	
 	
 	
 	return ui

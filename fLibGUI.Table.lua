@@ -99,7 +99,7 @@ function helper.CreateColumns(t)
         ui:SetHeight(t.headerheight)
         ui:SetPoint('TOPLEFT', currentframe, 'TOPLEFT', 0, 0)
         ui:SetPoint('TOPRIGHT', currentframe, 'TOPRIGHT', -t.resizebuttonwidth, 0)
-        ui:SetScript('OnClick', function()
+        ui:SetScript('OnClick', function(this)
             this.table.selectedcolnum = this.colnum
             --call extra actions
             for z = 1, #this.table.headerclickactions do
@@ -159,7 +159,7 @@ function helper.CreateRows(t)
         ui.highlightspecial:SetAllPoints(ui)
         ui.highlightspecial:Hide()
         
-        ui:SetScript('OnClick', function()
+        ui:SetScript('OnClick', function(this)
             local t = this.table
             
             --unselect all the other rows
@@ -240,7 +240,7 @@ function helper.CreateScrollBar(t)
         --insets are for the bgFile
     })
 
-    ui:SetScript('OnValueChanged', function()
+    ui:SetScript('OnValueChanged', function(this)
         this.table.startingindex = this:GetValue()
         --call extra actions
         for z = 1, #this.table.scrollactions do

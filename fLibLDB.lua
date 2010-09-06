@@ -100,7 +100,7 @@ do
 end
 
 local f = CreateFrame("Frame")
-f:SetScript("OnEvent", function()
+f:SetScript("OnEvent", function(this)
 	if icon then
 		icon:Register(fLib.ICONNAME, fLibLDB, fLib.db.global.minimap)
 	end
