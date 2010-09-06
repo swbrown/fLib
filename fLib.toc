@@ -3,6 +3,7 @@
 ## Description: Library for Tamrah's addon
 ## SavedVariables: fLibDB
 ## Dependencies:
+## X-Compatible-With: 40000
 
 embeds.xml
 fLib.lua
