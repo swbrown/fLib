@@ -1,9 +1,8 @@
-## Interface: 30100
+## Interface: 50001
 ## Title: fLib
 ## Description: Library for Tamrah's addon
 ## SavedVariables: fLibDB
 ## Dependencies:
-## X-Compatible-With: 40000
 
 embeds.xml
 fLib.lua
