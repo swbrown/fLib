@@ -251,11 +251,11 @@ end
 --Disbands the current raid
 local function DisbandRaidHandler()
 	SendChatMessage("Disbanding raid.", "RAID", nil, nil)
-	for M=1,GetNumRaidMembers() do UninviteUnit("raid"..M) end
+	for M=1,GetNumGroupMembers() do UninviteUnit("raid"..M) end
 end
 function addon:DisbandRaid()
 	--SendChatMessage("Disbanding raid.", "RAID", nil, nil)
-	--for M=1,GetNumRaidMembers() do UninviteUnit("raid"..M) end
+        --for M=1,GetNumGroupMembers() do UninviteUnit("raid"..M) end
 	self:ConfirmDialog2('Are you sure you want to disband the raid?', DisbandRaidHandler)
 end
 
