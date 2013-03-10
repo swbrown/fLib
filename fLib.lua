@@ -328,11 +328,7 @@ function addon.ConvertTimeStringToObject(tstr)
 	H = tonumber(H)
 	M = tonumber(M)
 	S = tonumber(S)
-	if y > 12 then
-		y = 1900 + y
-	else
-		y = 2000 + y
-	end
+	y = 2000 + y
 	
 	local tsobj = date('*t')
 	tsobj.year = y
