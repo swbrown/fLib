@@ -113,7 +113,11 @@ function fLib.Guild.GUILD_ROSTER_UPDATE()
 	for i = 1, GetNumGuildMembers(true) do
 		local name, rank, rankIndex, level, class, zone, note, 
 		officernote, online, status, _ = GetGuildRosterInfo(i)
-		
+
+		-- Temporary fix for patch 5.4.2 adding -servername to 
+		-- the name parameter but not consistently elsewhere.
+		name = string.gsub(name, "([^-]*)-.*", "%1")
+
 		if name then
 			roster[name] = {
 				rank = rank,
