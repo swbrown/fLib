@@ -243,6 +243,46 @@ function addon:Capitalize(str)
 	end
 end
 
+function addon:NameInRaid(name)
+	local cardinalName = addon:CardinalName(name)
+
+	for i = 1, MAX_RAID_MEMBERS do
+		raidName = addon:CardinalName(select(1, GetRaidRosterInfo(i)))
+		if raidName ~= nil then
+			if raidName == name then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+-- Several types of names are used by players and WoW itself:
+--
+-- - "Playername" (e.g., /w Faal dkp Playername)
+-- - "Playername-Hyjal" (client, players)
+-- - "Playername - Hyjal" (client, players?)
+--
+-- There is also history for these addons using "Playername-hyjal".  So 
+-- try and convert these various forms to the addon's old format.
+function addon:CardinalName(name)
+
+	if name == nil then
+		return nil
+	end
+
+	if name:find("-") == nil then
+		name = name .. "-" .. GetRealmName()
+	end
+
+	name = name:gsub(" ", "")
+	name = strlower(strtrim(name))
+	name = fLib.String.Capitalize(name)
+
+	return name
+end
+
 function addon:ExtractItemId(itemlink)
 	local _,_,itemid = strfind(itemlink, 'Hitem:(%d+):')
 	return tonumber(itemid)
@@ -379,6 +419,8 @@ local mixins = {
 	"GetOptions",
 	"SetOptions",
 	"Capitalize",
+	"NameInRaid",
+	"CardinalName",
 	"ParseWords",
 	"ExtractItemId",
 	"DisbandRaid",

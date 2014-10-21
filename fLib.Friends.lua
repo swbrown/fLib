@@ -12,9 +12,10 @@ local callbacks = {} --list of functions to callback after refreshstatus
 ----list of names to remove from friend list when you login
 
 function fLib.Friends.CHAT_MSG_WHISPER(eventName, msg, author)
+	local cardinalAuthor = fLib:CardinalName(author)
 	--update the guildees online status if they whisper you
-	if roster[author] then
-		roster[author].online = 1
+	if roster[cardinalAuthor] then
+		roster[cardinalAuthor].online = 1
 	end
 end
 
@@ -45,7 +46,8 @@ function fLib.Friends.FRIENDLIST_UPDATE()
 	for i = 1, GetNumFriends(true) do
 		local name, level, class, zone, online, status, note = GetFriendInfo(i)
 		if name then
-			roster[name] = {
+			local cardinalName = fLib:CardinalName(name)
+			roster[cardinalName] = {
 				level = level,
 				class = class,
 				zone = zone,
@@ -78,12 +80,12 @@ end
 
 function fLib.Friends.GetInfo(name)
 	if name == '' then return nil end
-	name = fLib.String.Capitalize(name)
-	local info = roster[name]
+	local cardinalName = fLib:CardinalName(name)
+	local info = roster[cardinalName]
 	if not info then
 		if rosterloadedonce and fLib.Guild.LoadedOnce then
-			AddFriend(name)
-			tinsert(fLib.db.global.friends.tbr, name)
+			AddFriend(cardinalName)
+			tinsert(fLib.db.global.friends.tbr, cardinalName)
 		elseif fLib.Guild.LoadedOnce then
 			ShowFriends()
 		end
@@ -92,10 +94,10 @@ function fLib.Friends.GetInfo(name)
 end
 
 function fLib.Friends.PrintInfo(name)
-	name = fLib.String.Capitalize(name)
-	local info = roster[name]
+	local cardinalName = fLib:CardinalName(name)
+	local info = roster[cardinalName]
 	if not info then
-		print(name .. ' is not in your friends list.')
+		print(cardinalName .. ' is not in your friends list.')
 	else
 		for key, val in pairs(info) do
 			print(key .. ' = ' .. val)

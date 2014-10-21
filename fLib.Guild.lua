@@ -31,21 +31,21 @@ function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 
 	if words[4] == 'offline.' then
 		--> update roster
-		name = words[1]
+		name = fLib:CardinalName(words[1])
 		info = roster[name]
 		if info then
 			info.online = 0
 		end
 	elseif words[4] == 'online.' then
 		--> update roster
-		name = words[1]
+		name = fLib:CardinalName(words[1])
 		info = roster[name]
 		if info then
 			info.online = 1
 		end
 	elseif words[3] == 'promoted' or words[3] == 'demoted' then
 		--> update roster
-		name = words[4]
+		name = fLib:CardinalName(words[4])
 		info = roster[name]
 		if info then
 			local newrank = strsub(words[6], 1, #words[6] - 1)
@@ -68,17 +68,17 @@ function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 		if words[3] == 'joined' then
 			print('guild join detected')
 			-->  update roster
-			name = words[1]
+			name = fLib:CardinalName(words[1])
 		elseif words[3] == 'left' then
 			print('guild left detected')
-			name = words[1]
+			name = fLib:CardinalName(words[1])
 			wipe(roster[name])
 			info = true
 		end
 	elseif words[8] == 'guild' then
 		if words[3] == 'kicked' then
 			--> update roster
-			name = words[1]
+			name = fLib:CardinalName(words[1])
 			wipe(roster[name])
 			info = true
 		end
@@ -90,9 +90,10 @@ function fLib.Guild.CHAT_MSG_SYSTEM(eventName, msg)
 end
 
 function fLib.Guild.CHAT_MSG_WHISPER(eventName, msg, author)
+	local cardinalAuthor = fLib:CardinalName(author)
 	--update the guildees online status if they whisper you
-	if roster[author] then
-		roster[author].online = 1
+	if roster[cardinalAuthor] then
+		roster[cardinalAuthor].online = 1
 	end
 end
 
@@ -113,13 +114,10 @@ function fLib.Guild.GUILD_ROSTER_UPDATE()
 	for i = 1, GetNumGuildMembers(true) do
 		local name, rank, rankIndex, level, class, zone, note, 
 		officernote, online, status, _ = GetGuildRosterInfo(i)
+                local cardinalName = fLib:CardinalName(name)
 
-		-- Temporary fix for patch 5.4.2 adding -servername to 
-		-- the name parameter but not consistently elsewhere.
-		name = string.gsub(name, "([^-]*)-.*", "%1")
-
-		if name then
-			roster[name] = {
+		if cardinalName then
+			roster[cardinalName] = {
 				rank = rank,
 				level = level,
 				class = class,
@@ -152,15 +150,15 @@ function fLib.Guild.Count(onlineonly)
 end
 
 function fLib.Guild.GetInfo(name)
-	name = fLib.String.Capitalize(name)
-	return roster[name]
+	local cardinalName = fLib:CardinalName(name)
+	return roster[cardinalName]
 end
 
 function fLib.Guild.PrintInfo(name)
-	name = fLib.String.Capitalize(name)
-	local info = roster[name]
+	local cardinalName = fLib:CardinalName(name)
+	local info = roster[cardinalName]
 	if not info then
-		print(name .. ' is not in the guild.')
+		print(cardinalName .. ' is not in the guild.')
 	else
 		for key, val in pairs(info) do
 			print(key .. ' = ' .. val)
